@@ -8,6 +8,7 @@ const config = require('./config/env')
 const logger = require('./util/logs')
 const errorHandleMiddle = require('./util/error')
 const mongoose = require('./connect')
+const createRes = require('./util/createRes')
 const app = new Koa()
 
 // 初始化数据
@@ -16,11 +17,10 @@ if (config.seedDB) {
 	initData()
 }
 
-// log记录
-
-// routes
 app.use(async(ctx, next) => {
+	// 附加方法
 	ctx.logger = logger
+	ctx.createRes = createRes
 	await next()
 })
 
@@ -32,7 +32,7 @@ require('./routes')(app)
 
 //错误监听
 app.on('error', (err, ctx) => {
-	if (process.env.NODE_ENV !== 'test') {
+	if (process.env.NODE_ENV !== 'development') {
 		console.error('error', err)
 	}
 })

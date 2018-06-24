@@ -1,13 +1,14 @@
 'use strict'
 
 const path = require('path')
-const session = require('koa-generic-session')
-// const RedisStore = require('koa-redis')
+const session = require('koa-session-minimal')
+const RedisStore = require('koa-redis')
 const responseTime = require('koa-response-time')
 const logger = require('koa-logger')
 const json = require('koa-json')
 const compress = require('koa-compress')
 const bodyParser = require('koa-bodyparser')
+const koaStatic = require('koa-static')
 const cors = require('kcors')
 const passport = require('koa-passport')
 const config = require('./env')
@@ -24,14 +25,27 @@ module.exports = function(app) {
   app.use(json())
   app.keys = [config.session.secrets]
   app.use(session({
-    key: 'jackblog.sid',
-    // store: RedisStore({
-    //   host:config.redis.host,
-    //   port:config.redis.port,
-    //   auth_pass:config.redis.password || ''
-    // }),
+    store: RedisStore({
+      host:config.redis.host,
+      port:config.redis.port,
+      auth_pass:config.redis.password || ''
+    }),
     cookie: config.session.cookie
   }))
+  app.use(koaStatic(
+    path.join(process.cwd(), config.static)
+  ))
+  
+  // count middleware, increment when url = /add
+// app.use(async (ctx, next) => {
+//   ctx.session.count = ctx.session.count || 0
+//   if (ctx.path === '/add') ctx.session.count++
+
+//   await next()
+
+//   ctx.body = ctx.session.count
+// })
+
   app.use(passport.initialize())
   app.use(compress())
 }

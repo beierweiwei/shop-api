@@ -8,9 +8,13 @@ const Schema = mongoose.Schema
 const crypto = require('crypto')
 
 let UserSchema = new Schema({
-	nickname: {
+	username: {
 		type: String,
 		unique: true,
+		require: true
+	},
+	password: {
+		type: String,
 		require: true
 	},
 	sex: {
@@ -26,11 +30,10 @@ let UserSchema = new Schema({
 	},
 	openid: {
 		type: String,
-		unique: true
 	},
 	ctime: {
 		type: Date,
-		default: Date.now()
+		default: Date.now
 	},
 	block: {
 		type: Boolean,

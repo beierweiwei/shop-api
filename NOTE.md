@@ -1,10 +1,24 @@
-#项目笔记
+# 项目笔记
+## 接口约定
 
-#开发配置
-#数据库（mongodb）
-##安装
-##启动
-##mongoose
+    {
+      code: 200, // 201:not login 500:'server error' 501 'not permit' 
+      status: ok, // error
+      errMsg: 'success',
+      data: {
+        list: [],
+        cout: 0,
+        curtPage: 0,
+        perPage: 10,
+        allPage: 100
+      }
+    }
+
+## 开发配置
+## 数据库（mongodb）
+### 安装
+### 启动
+### mongoose
 
 ##可视化工具
 [https://www.cnblogs.com/ljhdo/p/5793120.html](https://www.cnblogs.com/ljhdo/p/5793120.html)
@@ -79,10 +93,11 @@
 ```
 
 ## 入口文件
-`./server/app.js`
-```js 
-'use strict'
 
+`./server/app.js`
+
+```javscript 
+'use strict'
 // 设置默认环境变量
 process.env.NODE_ENV = process.env.NODE_ENV || 'development'
 const Koa = require('koa')
@@ -114,14 +129,14 @@ app.on('error',(err,ctx)=>{
         console.error('error', err)
     }
 })
-
 module.exports = app 
 ```
 
+
 ##数据库连接配置
 `./server/connect.js`
-
-```js 
+ 
+```
 const path = require('path')
 const fs = require('fs')
 const mongoose = require('mongoose')
@@ -144,7 +159,7 @@ module.exports = mongoose
 ##router配置
 `./server/router.js`
 
-```js
+```
 const Router = require('koa-router')()
 const logs = require('./api/logs')
 const users = require('./api/users')
@@ -176,7 +191,7 @@ module.exports = function(app) {
 ###环境配置
 `./server/config/env/index.js`
 
-```js
+```
 'use strict'
 
 var path = require('path')
@@ -270,7 +285,7 @@ module.exports = config
 ###koa配置(中间件)
 `./server/config/koa.js`
 
-```js
+```
 'use strict'
 
 const path = require('path')
@@ -311,10 +326,10 @@ module.exports = function(app) {
 
 ```
 
-###数据库初始化
+### 数据库初始化
 `./server/config/seed.js`
 
-```js 
+``` 
 /**
  * 初始化数据
  * 管理员用户
@@ -425,25 +440,25 @@ module.exports = async ()=>{
 
 
 
-#中间件
+## 中间件
+### [koa-session-minimal](https://github.com/longztian/koa-session-minimal)
+session管理，试过很多session中间件，只有这个生效（2018.6.24）
 
-##bunyan
+### bunyan
 输出日志 代替console
-[https://github.com/ajsharp/bunyan](https://github.com/ajsharp/bunyan)
-Make logging useful (and easy!) with Bunyan and MongoDB. As in Paul.
+[bunyan](https://www.npmjs.com/package/bunyan)
 
-
-##koa-router
+### koa-router
 [https://github.com/alexmingoia/koa-router](https://github.com/alexmingoia/koa-router)
 
-##koa-logger(开发环境中使用)
+### koa-logger(开发环境中使用)
 [https://www.npmjs.com/package/koa-logger](https://www.npmjs.com/package/koa-logger)
 
-##koa-response-time(开发环境中使用)
+### koa-response-time(开发环境中使用)
 [https://www.npmjs.com/package/koa-response-time](https://www.npmjs.com/package/koa-response-time)
 X-Response-Time middleware for Koa v2.
 
-## 身份验证
+### 身份验证
 `koa-passport`
 `jwt`(json web token) [https://github.com/koajs/jwt](https://github.com/koajs/jwt)
 `koa-jwt` [https://github.com/koajs/jwt](https://github.com/koajs/jwt)
@@ -451,14 +466,9 @@ X-Response-Time middleware for Koa v2.
 [理解OAuth 2.0](http://www.ruanyifeng.com/blog/2014/05/oauth_2_0.html)
 [理解jwt](http://www.haomou.net/2014/08/13/2014_bare_token/)
 
-## 跨平台使用命令
+### 跨平台使用命令
 `kcors`
 [https://github.com/koajs/cors](https://github.com/koajs/cors)
-
-## `session`
-`koa-generic-session` 官方建议转至 `koajs-session`
-[https://github.com/koajs/session](https://github.com/koajs/session)
-支持将session存储到其他数据库 如 redis
 
 ## redis
 `koa-redis` [https://github.com/koajs/koa-redis](https://github.com/koajs/koa-redis)

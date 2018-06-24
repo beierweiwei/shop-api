@@ -24,11 +24,15 @@ var all = {
   },
   //是否初始化数据
   seedDB: process.env.INITDATA || false,
-  session:{
-    secrets: 'awang-secret',
+  session: {
+    secrets: 'awang-secret'
   },
+  // 加密
+  secrets: 'wangwang',
   //用户角色种类
   userRoles: ['user', 'admin'],
+  // static
+  static: './static',
   //七牛配置
   qiniu:{
     app_key: process.env.QINIU_APP_KEY || '',

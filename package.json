@@ -10,7 +10,9 @@
     "pm2-start": "pm2 start --no-daemon process.json",
     "ava": "cross-env NODE_ENV=test ava test",
     "test": "cross-env NODE_ENV=test nyc --reporter=html --reporter=text ava --serial",
-    "coverage": "nyc report --reporter=text-lcov | coveralls"
+    "coverage": "nyc report --reporter=text-lcov | coveralls",
+    "example": "cross-env nodemon ./example/app.js",
+    "busboy": "cross-env nodemon ./example/busboy.js"
   },
   "author": "",
   "license": "ISC",
@@ -32,6 +34,9 @@
     "koa-redis": "^3.0.0",
     "koa-response-time": "^2.0.0",
     "koa-router": "^7.1.1",
+    "koa-session": "^5.8.1",
+    "koa-session-minimal": "^3.0.4",
+    "koa-static": "^5.0.0",
     "lodash": "^4.17.4",
     "markdown-it": "^8.3.2",
     "mongoose": "^4.11.7",

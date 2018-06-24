@@ -1,8 +1,8 @@
 'use static'
 
 const router = require('koa-router')()
-const controller = require('./users.controller')
+const controller = require('./product.controller')
 // router.post('/adduser', controller.addUser)
-router.get('/getuserlist', controller.getUserList)
+router.post('/edit/:id', controller.editProduct)
 
 module.exports = router

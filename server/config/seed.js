@@ -20,12 +20,11 @@ module.exports = async ()=>{
 	try {
 		if(UserCount === 0) {
 			await User.create({
-				nickname: 'wangwang',
+				username: 'wangwang',
 				sex: 0,
 				tel: '12368132987',
 				address: 'xxxxxxxx',
 				openid: '123',
-				block: false,
 				money: 1000
 			})
 		}
