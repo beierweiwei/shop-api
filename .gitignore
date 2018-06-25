@@ -7,7 +7,7 @@ npm-debug.log*
 .tmp
 .sass-cache
 .nyc_output
-uploads
+./static/upload
 
 ###############
 .DS_Store

@@ -8,7 +8,7 @@ const editProduct = async (ctx, next) => {
 	const thumbPic = data.thumbPic || []//缩略图，上传组建
 	const des = data.des || ''
 	const prop = data.prop  || '' // 引用库
-	const isSale = data.isSale || true 
+	const isSale = data.isSale || 1 
 	const stock = data.stock || 1000
 	const saleNum = data.saleNum || 0
 	const price = data.price  || 0 
@@ -52,14 +52,15 @@ const editProduct = async (ctx, next) => {
 	}
 }
 
-const getProductById = async function (ctx, id) {
-	const id = ctx.request.params.id
+const getProductById = async function (ctx) {
+ const id = ctx.params.id
+ console.log(id)
 	const resData = {
 		code: 200
 	}
 	if(id) {
 		try{
-			const product = await Product.findOne('_id', id)
+			const product = await Product.findOne({'_id': id})
 			resData.code = 200
 			resData.data = product
 		}catch(err) {
@@ -72,4 +73,20 @@ const getProductById = async function (ctx, id) {
 	ctx.body = ctx.createRes(resData.code, resData.data)
 }
 
+const getProductList = async function (ctx) {
+	const query = ctx.query 
+	//先查所有
+	try {
+		let result = await Product.find({}).sort({'ctime': -1}).exec()
+		let count = await Product.count()
+		if (result) ctx.body = ctx.createRes(200, {list: result, count: count})
+		else ctx.body = ctx.createRes(500, result)
+	}catch (err) {
+		ctx.body = ctx.createRes(500, err.message)
+	}
+	
+}
+
 exports.editProduct = editProduct
+exports.getProductById = getProductById
+exports.getProductList = getProductList
