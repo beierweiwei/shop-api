@@ -36,7 +36,6 @@ module.exports = async ()=>{
 		const AreaCount = await Area.count()
 		if (AreaCount === 0) {
 			const AreaData = require('./DB/areadb')()
-			console.log(AreaData)
 			const resutl = await Area.create(AreaData)
 			console.log(resutl)	
 		}

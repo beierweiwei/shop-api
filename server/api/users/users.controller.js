@@ -16,6 +16,17 @@ exports.getUserList = async (ctx, next) => {
 	}
 }
 
+exports.getUser = async function (ctx, next) {
+	const id = ctx.params.id 
+	if (!id) ctx.body = ctx.createRes(501)
+	try {
+		let result = await User.findOne({_id: id}).select('username tel password sex bitrth address').exec()
+		ctx.body = ctx.createRes(200, result)
+	}catch(err) {
+		ctx.body = ctx.createRes(500,err.message)
+	}
+}
+
 // // 关于收货地址
 // exports.addAddress = async function (ctx, netx) {
 	
