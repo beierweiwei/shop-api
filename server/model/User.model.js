@@ -42,7 +42,11 @@ let UserSchema = new Schema({
 	money: {
 		type: Number,
 		default: 0
-	}
+	},
+	address: [{
+		type: Schema.Types.ObjectId,
+		ref: 'Address'
+	}]
 })
 
 exports.UserSchema = UserSchema

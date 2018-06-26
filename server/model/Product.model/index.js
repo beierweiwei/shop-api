@@ -50,9 +50,8 @@ const ProductSchema = new mongoose.Schema({
 		type: String
 	},
 	cateId: {
-		// type: Schema.Types.ObjectId,
-		// ref: 'ProdutCates'
-		type: String,
+		type: Schema.Types.ObjectId,
+		ref: 'ProdutCate'
 	},
 	shopId: {
 		type: String,
@@ -83,6 +82,8 @@ ProductSchema
 		'shopId': this.shopId,
 		'ctime': this.ctime
 	}})
+
+
 
 	exports.ProductSchema = ProductSchema
 	module.exports = mongoose.model('Product', ProductSchema)

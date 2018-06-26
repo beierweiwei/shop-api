@@ -2,8 +2,9 @@
 
 const router = require('koa-router')()
 const controller = require('./product.controller')
+const {needLogin} = require('../../auth')
 // router.post('/adduser', controller.addUser)
-router.post('/edit/:id', controller.editProduct)
-router.get('/edit/:id', controller.getProductById)
-router.get('/list', controller.getProductList)
+router.post('/edit/:id', needLogin, controller.editProduct)
+router.get('/edit/:id', needLogin, controller.getProductById)
+router.get('/list', needLogin, controller.getProductList)
 module.exports = router

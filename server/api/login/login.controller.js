@@ -14,7 +14,6 @@ exports.login = async (ctx, next) => {
 			ctx.session.user = user
 			return ctx.body = ctx.createRes(200, user)
 		}
-		console.log(reqData, user)
 	}
 	ctx.body = ctx.createRes(300)
 }
@@ -25,11 +24,11 @@ exports.register = async (ctx, next) => {
 		try {
 			res = await User.create(data)
 			ctx.session.user = res
+			ctx.body = ctx.createRes(200)
 		}catch(err) {
 			ctx.throw(err)
 		}
-		ctx.body = ctx.createRes(200)
 	}else {
-		ctx.createRes(300)
+		ctx.body = ctx.createRes(300)
 	}
 }
