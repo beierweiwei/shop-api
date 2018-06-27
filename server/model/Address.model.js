@@ -10,10 +10,8 @@ const AddressSchema = new Schema({
 		type: String,
 		require: true 
 	},
-	AreaCode:[{
-		type: Schema.Types.ObjectId,
-		ref: 'Area'
-	}],
+	areaCode:[],
+	areaName: String,
 	detail: String
 }) 
 
