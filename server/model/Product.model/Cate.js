@@ -16,7 +16,8 @@ const ProductcateSchema = new Schema({
 	ctime: {
 		type: Date,
 		default: Date.now
-	}
+	}，
+	prodProps: [Schema.Types.ObjectId]
 })
 const Productcate = mongoose.model('Productcate', ProductcateSchema)
 exports.ProductcateSchema = ProductcateSchema

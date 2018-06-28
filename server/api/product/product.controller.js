@@ -1,6 +1,7 @@
 const mongoose = require('mongoose')
 const Product = mongoose.model('Product')
-
+const ProductProps = mongoose.model('ProductProps')
+const ProductCate = mongoose.model('ProductCate')
 const editProduct = async (ctx, next) => {
 	const data =  ctx.request.body
 	let productId = ctx.params.id
@@ -84,7 +85,10 @@ const getProductList = async function (ctx) {
 	}catch (err) {
 		ctx.body = ctx.createRes(500, err.message)
 	}
-	
+}
+
+const getProductProps = asycn function (ctx, next) {
+	ProductCate.populate('prodProps')
 }
 
 exports.editProduct = editProduct
