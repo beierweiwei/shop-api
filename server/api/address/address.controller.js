@@ -17,12 +17,8 @@ exports.addAddress = async function (ctx, netx) {
 		address.detail = data.detail
 		address.areaName = data.areaCode.map(area => area.name).join(',')
 		let result = await address.save()
-
-		// if(user.address.length >= 2) {
-		// 	ctx.body = ctx.createRes(500)
-		// }
 		result = await User.findOneAndUpdate({_id: userId}, {$push: {address: address._id}})
-	  result = await User.findOne({_id: user._id})
+
 		ctx.body = ctx.createRes(200, result)
 	}catch(err) {
 		ctx.body = ctx.createRes(500, err.message)
@@ -38,20 +34,21 @@ exports.deleteAddress = async function (ctx, netx) {
 	const id = ctx.params.id
 	const user = ctx.session.user
   console.log(await User.findOne({address: id}))
-	if (user._id.toString() === data.userId) {
+	// if (user._id.toString() === data.userId) {
 		try {
-			const result = await User.findOneAndUpdate(
+			let result = await User.findOneAndUpdate(
 				{_id: user._id}, 
 				{$pull: {address: id}}, 
 			)
+			result = await Address.findOneAndRemove({_id: id})
 			ctx.body = ctx.createRes(200, result)
 		}catch(err) {
 			ctx.body = ctx.createRes(500, err.message)
 		}
 		
-	} else {
-		ctx.body = ctx.createRes(501)
-	}
+	// } else {
+	// 	ctx.body = ctx.createRes(501)
+	// }
 }
 
 exports.editAddress = async function (ctx, netx) {
