@@ -6,7 +6,9 @@ const User = mongoose.model('User')
 exports.addAddress = async function (ctx, netx) {
 	const data = ctx.request.body 
 	const user = ctx.session.user
+	const userId = data.userId
 	user.address = user.address || []
+	console.log(data)
 	try {
 		let address = new Address()
 		address.tel = data.tel
@@ -16,10 +18,10 @@ exports.addAddress = async function (ctx, netx) {
 		address.areaName = data.areaCode.map(area => area.name).join(',')
 		let result = await address.save()
 
-		if(user.address.length >= 2) {
-			ctx.body = ctx.createRes(500)
-		}
-		result = await User.findOneAndUpdate({_id: user._id}, {$push: {address: address._id}})
+		// if(user.address.length >= 2) {
+		// 	ctx.body = ctx.createRes(500)
+		// }
+		result = await User.findOneAndUpdate({_id: userId}, {$push: {address: address._id}})
 	  result = await User.findOne({_id: user._id})
 		ctx.body = ctx.createRes(200, result)
 	}catch(err) {
@@ -33,15 +35,14 @@ exports.deleteAddress = async function (ctx, netx) {
 	// 判断身份,是否是用户本人
 	
 	const data = ctx.request.body
-	const id = ctx.params._id
+	const id = ctx.params.id
 	const user = ctx.session.user
-
+  console.log(await User.findOne({address: id}))
 	if (user._id.toString() === data.userId) {
 		try {
 			const result = await User.findOneAndUpdate(
 				{_id: user._id}, 
-				{$unset: {"address.$[ttt]": ''}}, 
-				{arrayFilters: [{ttt: {$eq: id}}]}
+				{$pull: {address: id}}, 
 			)
 			ctx.body = ctx.createRes(200, result)
 		}catch(err) {
@@ -57,6 +58,7 @@ exports.editAddress = async function (ctx, netx) {
 	// 编辑
 	const id = ctx.params.id 
 	const areaCode = ctx.request.body.areaCode
+	console.log(areaCode)
 	const name = ctx.request.body.name
 	const tel = ctx.request.body.tel
 	const detail = ctx.request.body.detail
@@ -72,9 +74,10 @@ exports.editAddress = async function (ctx, netx) {
 
 exports.getUserAddressList = async function (ctx, next) {
 	const user = ctx.session.user
+	const userId = ctx.query.userId
 	try {
-		const result = await User.findOne({'_id': user._id}).populate('address').exec()
-		ctx.body = ctx.createRes(200, result.address)
+		const result = await User.findOne({'_id': userId}).populate('address').exec()
+		ctx.body = ctx.createRes(200, result && result.address)
 	}catch(err) {
 		ctx.body = ctx.createRes(500, err.message)
 	}
