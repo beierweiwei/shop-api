@@ -1,6 +1,6 @@
 const mongoose = require('mongoose')
 const Schema = mongoose.Schema 
-const ProductcateSchema = new Schema({
+const ProductCateSchema = new mongoose.Schema({
 	name: {
 		type: String,
 		require: true 
@@ -16,9 +16,11 @@ const ProductcateSchema = new Schema({
 	ctime: {
 		type: Date,
 		default: Date.now
-	}，
-	prodProps: [Schema.Types.ObjectId]
+	},
+	prodProps: [{
+		type: Schema.Types.ObjectId
+	}]
 })
-const Productcate = mongoose.model('Productcate', ProductcateSchema)
-exports.ProductcateSchema = ProductcateSchema
-module.exports = Productcate
+const ProductCate = mongoose.model('ProductCate', ProductCateSchema)
+exports.ProductCateSchema = ProductCateSchema
+module.exports = ProductCate

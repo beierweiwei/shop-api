@@ -87,8 +87,9 @@ const getProductList = async function (ctx) {
 	}
 }
 
-const getProductProps = asycn function (ctx, next) {
-	ProductCate.populate('prodProps')
+// 根据商品分类获取商品属性
+const getProductProps = async function (ctx, next) {
+	
 }
 
 exports.editProduct = editProduct
