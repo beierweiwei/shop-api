@@ -27,6 +27,26 @@ exports.getUser = async function (ctx, next) {
 	}
 }
 
+exports.updateUser = async function (ctx, netx) {
+	const userId = ctx.params.id 
+	const data = ctx.request.body 
+	try {
+		const result = await User.findOneAndUpdate({_id: userId}, {
+			$set: {
+				tel: data.tel,
+				username: data.username,
+				password: data.password,
+				sex: data.sex,
+				birth: data.birth
+			}
+		})
+		ctx.body = ctx.createRes(200, result)
+
+	}catch(err) {
+		ctx.body = ctx.reateRes(500, err.message)
+	}
+}
+
 // // 关于收货地址
 // exports.addAddress = async function (ctx, netx) {
 	
