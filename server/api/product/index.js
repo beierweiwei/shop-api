@@ -8,3 +8,5 @@ router.post('/edit/:id', needLogin, controller.editProduct)
 router.get('/edit/:id', needLogin, controller.getProductById)
 router.get('/list', needLogin, controller.getProductList)
 module.exports = router
+
+// 前台api

@@ -1,6 +1,7 @@
 const mongoose = require('mongoose')
 const Product = mongoose.model('Product')
-
+const ProductProps = mongoose.model('ProductProps')
+const ProductCate = mongoose.model('ProductCate')
 const editProduct = async (ctx, next) => {
 	const data =  ctx.request.body
 	let productId = ctx.params.id
@@ -84,6 +85,10 @@ const getProductList = async function (ctx) {
 	}catch (err) {
 		ctx.body = ctx.createRes(500, err.message)
 	}
+}
+
+// 根据商品分类获取商品属性
+const getProductProps = async function (ctx, next) {
 	
 }
 
