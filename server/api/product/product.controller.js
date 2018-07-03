@@ -92,6 +92,36 @@ const getProductProps = async function (ctx, next) {
 	
 }
 
+const getProductCateList = async function (ctx, next) {
+	try {
+		const result = ProductCate.find()
+		if (reesult) {
+			ctx.body = ctx.cretaeRes(200, result)
+		}
+	}catch(err) {
+		ctx.body = ctx.cretaeRes(200)
+	}
+}
+
+const updateProductProps = async function (ctx, next) {
+
+}
+
+const createProductProps = async function (ctx, next) {
+	const data = data 
+	try {
+		const newCate = await ProductCate.create(data)
+
+	}catch(err) {
+
+	}
+	
+
+}
+
+// const removeProductCates = async () {}
+// const removeProductProps = asynce () {}
+
 exports.editProduct = editProduct
 exports.getProductById = getProductById
 exports.getProductList = getProductList
