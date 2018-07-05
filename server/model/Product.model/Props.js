@@ -1,16 +1,15 @@
 const mongoose = require('mongoose')
 const Schema = mongoose.Schema 
 
-const ProductPropsSchema = new Schema({
+const ProductPropSchema = new Schema({
 	name: String,
+	field: String,
 	isMulit: Boolean,
 	selector: [{
 		type: String,
 		unique: true
 	}]
 })
-
-const ProductProps = mongoose.model('ProductProps', ProductPropsSchema)
-
-exports.ProductPropsSchema = ProductPropsSchema
-module.exports = ProductProps
+const ProductProp = mongoose.model('ProductProp', ProductPropSchema)
+exports.ProductPropSchema = ProductPropSchema
+module.exports = ProductProp

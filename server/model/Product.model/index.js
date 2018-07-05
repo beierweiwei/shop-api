@@ -14,12 +14,11 @@ const ProductSchema = new mongoose.Schema({
 		type: String,
 		require: true
 	},
-	prop: {
-		// type: Schema.Types.ObjectId,
-		// ref: 'ProductProps'
-		type: String,
-		require: true
-	},
+	props: [{
+		name: String,
+		selector: [],		
+		sort: 0
+	}],
 	isSale: {
 		type: Boolean,
 		default: true
@@ -60,7 +59,18 @@ const ProductSchema = new mongoose.Schema({
 	ctime: {
 		type: Date,
 		default: Date.now
-	}
+	},
+	subProd: [
+		{
+			// id: Schema.Types.ObjectId,
+			props: Object,
+			price: Number,
+			stock: Number,
+			saleNum: Number,
+			isSale: Boolean,
+			thumbPic: []
+		}
+	]
 })
 
 ProductSchema

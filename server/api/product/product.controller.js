@@ -1,6 +1,6 @@
 const mongoose = require('mongoose')
 const Product = mongoose.model('Product')
-const ProductProps = mongoose.model('ProductProps')
+const ProductProp = mongoose.model('ProductProp')
 const ProductCate = mongoose.model('ProductCate')
 const editProduct = async (ctx, next) => {
 	const data =  ctx.request.body
@@ -8,7 +8,7 @@ const editProduct = async (ctx, next) => {
 	const title = data.title || ''
 	const thumbPic = data.thumbPic || []//缩略图，上传组建
 	const des = data.des || ''
-	const prop = data.prop  || '' // 引用库
+	const props = data.props  || '' // 引用库
 	const isSale = data.isSale || 1 
 	const stock = data.stock || 1000
 	const saleNum = data.saleNum || 0
@@ -16,14 +16,15 @@ const editProduct = async (ctx, next) => {
 	const mprice = data.mprice || 0 
 	const detail = data.detail || ''
 	const unit = data.unit || ''// 引用库
-	const cateId =data.cateId || 0// 引用库
-	const shopId = data.shopId || 0
+	const cateId =data.cateId// 引用库
+	const shopId = data.shopId
+	let selector = data.selector
 	let result = {}
 	let productData = {
 		title,
 		thumbPic,
 		des,
-		prop,
+		props,
 		isSale,
 		stock,
 		saleNum,
@@ -35,12 +36,28 @@ const editProduct = async (ctx, next) => {
 		shopId
 	}
 	productId = productId || 'add'
+
+	// selector = [{
+	// 	props: [{name: 'color', value: 'red'}, {name: 'size', value: 'X'}],
+	// 	stock: 200,
+	// 	price: 2300
+	// }]
+	productData.subProd = selector.map(subProduct => {
+		let tempData = {
+			price: subProduct.price,
+			stock: subProduct.stock,
+			isSale: subProduct.isSale,
+			thumbPic: subProduct.thumbPic,
+		}
+		let tempProp = tempData.props = {}
+		subProduct.props.map(prop => {
+			tempProp[prop.name] = prop.value
+		})
+		return tempData
+	})
 	try {
 		if(productId !== 'add') {
-			console.log(productData)
 			const product = await Product.findOne({'_id': productId})
-		  // console.log(product)
-		  
 		  result = await product.update(productData)
 		  
 		}else {
@@ -55,7 +72,6 @@ const editProduct = async (ctx, next) => {
 
 const getProductById = async function (ctx) {
  const id = ctx.params.id
- console.log(id)
 	const resData = {
 		code: 200
 	}
@@ -88,39 +104,11 @@ const getProductList = async function (ctx) {
 }
 
 // 根据商品分类获取商品属性
-const getProductProps = async function (ctx, next) {
-	
-}
 
-const getProductCateList = async function (ctx, next) {
-	try {
-		const result = ProductCate.find()
-		if (reesult) {
-			ctx.body = ctx.cretaeRes(200, result)
-		}
-	}catch(err) {
-		ctx.body = ctx.cretaeRes(200)
-	}
-}
 
-const updateProductProps = async function (ctx, next) {
-
-}
-
-const createProductProps = async function (ctx, next) {
-	const data = data 
-	try {
-		const newCate = await ProductCate.create(data)
-
-	}catch(err) {
-
-	}
-	
-
-}
 
 // const removeProductCates = async () {}
-// const removeProductProps = asynce () {}
+// const removeProductProp = asynce () {}
 
 exports.editProduct = editProduct
 exports.getProductById = getProductById

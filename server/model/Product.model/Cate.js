@@ -19,6 +19,9 @@ const ProductCateSchema = new mongoose.Schema({
 	},
 	prodProps: [{
 		type: Schema.Types.ObjectId
+	}],
+	pid: [{
+		type: Schema.Types.ObjectId
 	}]
 })
 const ProductCate = mongoose.model('ProductCate', ProductCateSchema)
