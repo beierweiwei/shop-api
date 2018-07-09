@@ -4,10 +4,24 @@ const _ = require('lodash')
 const ProductCate = mongoose.model('ProductCate')
 
 const addProductCate = async function (ctx, next) {
+	let id = ctx.params.id 
 	let data = ctx.request.body 
-	let result 
+	let result
+	if (!(data.prodProps && data.prodProps.length <= 0)) delete data.prodProps
 	try {
-		result = await ProductCate.create(data)
+		if (id === 'add') {
+			result = await ProductCate.create(data)
+		}else {
+			result = await ProductCate.findOneAndUpdate({_id: id}, {$set: {
+				name: data.name,
+				field: data.field,
+				title: data.title,
+				sort: data.sort,
+				pid: data.pid,
+				props: data.props,
+				uTime: Date.now
+			}}, {new: true})
+		}
 		if(result) ctx.body = ctx.createRes(200, result)
 	} catch(err) {
 		ctx.body = ctx.createRes(500, err.message)
@@ -27,7 +41,7 @@ const getProductCate = async function (ctx, next) {
 
 const getProductCateList = async function (ctx, next) {
 	try {
-		const result = await ProductCate.find()
+		const result = await ProductCate.find().populate('pid').populate('props', 'name')
 
 		if (result) {
 			ctx.body = ctx.createRes(200, result)

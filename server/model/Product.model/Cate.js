@@ -9,6 +9,7 @@ const ProductCateSchema = new mongoose.Schema({
 		type: String,
 		require: true
 	},
+	title: String,
 	sort: {
 		type: Number,
 		default: 0
@@ -17,12 +18,17 @@ const ProductCateSchema = new mongoose.Schema({
 		type: Date,
 		default: Date.now
 	},
-	prodProps: [{
-		type: Schema.Types.ObjectId
+	props: [{
+		type: Schema.Types.ObjectId,
+		ref: 'ProductProp'
 	}],
 	pid: [{
 		type: Schema.Types.ObjectId
-	}]
+	}],
+	utime: {
+		type: Date,
+		default: Date.now
+	}
 })
 const ProductCate = mongoose.model('ProductCate', ProductCateSchema)
 exports.ProductCateSchema = ProductCateSchema

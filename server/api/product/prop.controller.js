@@ -2,11 +2,18 @@ const mongoose = require('mongoose')
 const _ = require('lodash')
 const ProductProp = mongoose.model('ProductProp')
 
-const createProductProp = async function (ctx, next) {
+const updateProductProp = async function (ctx, next) {
+	let id = ctx.params.id
+	id = id || 'add'
 	const data = ctx.request.body 
 	let result 
 	try {
-		result = await ProductProp.create(data)
+		if (id === 'add') {
+			result = await ProductProp.create(data)
+		}else {
+			result = await ProductProp.findByIdAndUpdate(id, data, {new: true})
+		}
+	
 		if (result) ctx.body = ctx.createRes(200, result)
 	}catch(err) {
 		ctx.body = ctx.createRes(500, err.message)
@@ -26,17 +33,17 @@ const removeProductProp = async function (ctx, next) {
 	}
 }
 
-const updateProductProp = async function (ctx, next) {
-	const id = ctx.params.id
-	const data = ctx.request.body 
-	let result 
-	try {
-		result = await ProductProp.findByIdAndUpdate(id, data, {new: true})
-		if (result) ctx.body = ctx.createRes(200, result)
-	} catch (err) {
-		ctx.body = ctx.createRes(500, err.message)
-	}
-}
+// const updateProductProp = async function (ctx, next) {
+// 	const id = ctx.params.id
+// 	const data = ctx.request.body 
+// 	let result 
+// 	try {
+// 		result = await ProductProp.findByIdAndUpdate(id, data, {new: true})
+// 		if (result) ctx.body = ctx.createRes(200, result)
+// 	} catch (err) {
+// 		ctx.body = ctx.createRes(500, err.message)
+// 	}
+// }
 
 const getProductProp = async function (ctx, next) {
 	const id = ctx.params.id 
@@ -57,7 +64,6 @@ const getProductProp = async function (ctx, next) {
  		ctx.body = ctx.createRes(500, err.message)
  	}
  }
- exports.createProductProp = createProductProp
  exports.removeProductProp = removeProductProp
  exports.updateProductProp = updateProductProp
  exports.getProductProp = getProductProp

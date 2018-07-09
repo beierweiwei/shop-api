@@ -8,7 +8,8 @@ const ProductPropSchema = new Schema({
 	selector: [{
 		type: String,
 		unique: true
-	}]
+	}],
+	sort: Number
 })
 const ProductProp = mongoose.model('ProductProp', ProductPropSchema)
 exports.ProductPropSchema = ProductPropSchema

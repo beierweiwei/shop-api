@@ -12,18 +12,18 @@ router.get('/list', needLogin, ProductController.getProductList)
 
 // 商品分类
 router.get('/cate/:id',CateController.getProductCate)
-router.post('/cate/add', CateController.addProductCate)
+router.post('/cate/:id', CateController.addProductCate)
 router.get('/cate', CateController.getProductCateList)
 router.post('/cate/remove', CateController.removeProductCate)
-router.post('/cate/update/:id', CateController.updateProductCate)
+// router.post('/cate/update/:id', CateController.updateProductCate)
 
 // 商品属性
-
+router.post('/prop/remove', PropController.removeProductProp)
 router.get('/prop', PropController.getProductPropList)
 router.get('/prop/:id', PropController.getProductProp)
-router.post('/prop/update/:id', PropController.updateProductProp)
-router.post('/prop/add', PropController.createProductProp)
-router.post('/prop/remove', PropController.removeProductProp)
+router.post('/prop/:id', PropController.updateProductProp)
+// router.post('/prop/add', PropController.createProductProp)
+
 module.exports = router
 
 // 前台api
