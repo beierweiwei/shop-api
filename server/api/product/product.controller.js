@@ -49,6 +49,29 @@ const editProduct = async (ctx, next) => {
 			isSale: subProduct.isSale,
 			thumbPic: subProduct.thumbPic,
 		}
+
+		const mocoData = {
+			thumbPic: [],
+			isSale: true,
+			price: 300,
+			subProd: [
+				{
+					isSale: true,
+					price: 200,
+					stock: 200,
+					saleNum: 0,
+					thumbPic: 'xxx.img',
+					props: [
+						{
+							name: '颜色',
+							filed: 'color',
+							value: '红色',
+							sort: 0
+						}
+					]
+				}
+			]
+		}
 		let tempProp = tempData.props = {}
 		subProduct.props.map(prop => {
 			tempProp[prop.name] = prop.value

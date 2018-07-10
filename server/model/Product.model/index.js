@@ -68,7 +68,7 @@ const ProductSchema = new mongoose.Schema({
 			stock: Number,
 			saleNum: Number,
 			isSale: Boolean,
-			thumbPic: []
+			thumbPic: String
 		}
 	]
 })
