@@ -1,13 +1,12 @@
 # Logs
 *.log
 npm-debug.log*
-
 # Runtime data
 *.pid
 .tmp
 .sass-cache
 .nyc_output
-./static/upload
+:/static/upload
 
 ###############
 .DS_Store

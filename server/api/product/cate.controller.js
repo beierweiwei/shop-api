@@ -32,7 +32,7 @@ const getProductCate = async function (ctx, next) {
 	const id = ctx.params.id 
 	let result 
 	try {
-		result = await ProductCate.findOne({_id: id})
+		result = await ProductCate.findOne({_id: id}).populate('props')
 		if (result) ctx.body = ctx.createRes(200, result)
 	} catch(err) {
 		ctx.body = ctx.createRes(500, err.message)

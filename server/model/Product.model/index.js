@@ -20,8 +20,8 @@ const ProductSchema = new mongoose.Schema({
 		sort: 0
 	}],
 	isSale: {
-		type: Boolean,
-		default: true
+		type: Number,
+		default: 1
 	},
 	stock: {
 		type: Number,
@@ -60,14 +60,21 @@ const ProductSchema = new mongoose.Schema({
 		type: Date,
 		default: Date.now
 	},
-	subProd: [
+	subProds: [
 		{
 			// id: Schema.Types.ObjectId,
-			props: Object,
+			props: String,
+			propsIds: [],
 			price: Number,
 			stock: Number,
-			saleNum: Number,
-			isSale: Boolean,
+			saleNum: {
+				type: Number,
+				default: 0
+			},
+			isSale: {
+				type: Number,
+				default: 1
+			},
 			thumbPic: String
 		}
 	]

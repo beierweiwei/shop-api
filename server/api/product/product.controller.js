@@ -18,7 +18,8 @@ const editProduct = async (ctx, next) => {
 	const unit = data.unit || ''// 引用库
 	const cateId =data.cateId// 引用库
 	const shopId = data.shopId
-	let selector = data.selector
+	let subProds = data.subProds
+	console.log(subProds)
 	let result = {}
 	let productData = {
 		title,
@@ -33,7 +34,8 @@ const editProduct = async (ctx, next) => {
 		detail,
 		unit,
 		cateId,
-		shopId
+		shopId,
+		subProds
 	}
 	productId = productId || 'add'
 
@@ -42,42 +44,6 @@ const editProduct = async (ctx, next) => {
 	// 	stock: 200,
 	// 	price: 2300
 	// }]
-	productData.subProd = selector.map(subProduct => {
-		let tempData = {
-			price: subProduct.price,
-			stock: subProduct.stock,
-			isSale: subProduct.isSale,
-			thumbPic: subProduct.thumbPic,
-		}
-
-		const mocoData = {
-			thumbPic: [],
-			isSale: true,
-			price: 300,
-			subProd: [
-				{
-					isSale: true,
-					price: 200,
-					stock: 200,
-					saleNum: 0,
-					thumbPic: 'xxx.img',
-					props: [
-						{
-							name: '颜色',
-							filed: 'color',
-							value: '红色',
-							sort: 0
-						}
-					]
-				}
-			]
-		}
-		let tempProp = tempData.props = {}
-		subProduct.props.map(prop => {
-			tempProp[prop.name] = prop.value
-		})
-		return tempData
-	})
 	try {
 		if(productId !== 'add') {
 			const product = await Product.findOne({'_id': productId})
@@ -95,22 +61,16 @@ const editProduct = async (ctx, next) => {
 
 const getProductById = async function (ctx) {
  const id = ctx.params.id
-	const resData = {
-		code: 200
+ let result 
+ if (!id) ctx.body = ctx.create(501)
+	try{
+		result = await Product.findOne({'_id': id})
+		if (result) ctx.body = ctx.createRes(200, result)
+		else ctx.body = ctx.createRes(502)
+	}catch(err) {
+		ctx.body = ctx.createRes(500, err.message)
 	}
-	if(id) {
-		try{
-			const product = await Product.findOne({'_id': id})
-			resData.code = 200
-			resData.data = product
-		}catch(err) {
-			resData.code = 500
-			resData.data = err
-		}
-	}else {
-		resData.code = 501
-	}
-	ctx.body = ctx.createRes(resData.code, resData.data)
+	
 }
 
 const getProductList = async function (ctx) {

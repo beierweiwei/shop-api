@@ -11,10 +11,12 @@ router.get('/edit/:id', needLogin, ProductController.getProductById)
 router.get('/list', needLogin, ProductController.getProductList)
 
 // 商品分类
+router.post('/cate/remove', CateController.removeProductCate)
 router.get('/cate/:id',CateController.getProductCate)
 router.post('/cate/:id', CateController.addProductCate)
 router.get('/cate', CateController.getProductCateList)
-router.post('/cate/remove', CateController.removeProductCate)
+
+// router.get('/cate/:id/props', CateController.getPropsByCateId)
 // router.post('/cate/update/:id', CateController.updateProductCate)
 
 // 商品属性

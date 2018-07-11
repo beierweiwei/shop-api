@@ -3,11 +3,13 @@ const Schema = mongoose.Schema
 const ProductCateSchema = new mongoose.Schema({
 	name: {
 		type: String,
-		require: true 
+		require: true,
+		unique: true
 	},
 	field: {
 		type: String,
-		require: true
+		require: true,
+		unique: true
 	},
 	title: String,
 	sort: {
@@ -23,7 +25,7 @@ const ProductCateSchema = new mongoose.Schema({
 		ref: 'ProductProp'
 	}],
 	pid: [{
-		type: Schema.Types.ObjectId
+		type: Schema.Types.ObjectId,
 	}],
 	utime: {
 		type: Date,

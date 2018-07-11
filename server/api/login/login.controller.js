@@ -3,15 +3,19 @@ const User = mongoose.model('User')
 exports.login = async (ctx, next) => {
 	const reqData = ctx.request.body
 	// first username
-	let user = {}
+	let user
 	if(reqData.username && reqData.password) {
 		try {
-			user = await User.findOne({username: reqData.username}).exec()
+			user = await User.findOne({username: reqData.username}, 'username password tel sex').lean()
+			console.log('user',user)
 		}catch(err) {
-			ctx.throw(err)
+			console.log(err)
+			ctx.body = ctx.createRes(300, err.message)
 		}
 		if (user && user.password === reqData.password) {
 			ctx.session.user = user
+
+			delete user.password
 			return ctx.body = ctx.createRes(200, user)
 		}
 	}
