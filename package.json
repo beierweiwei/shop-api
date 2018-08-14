@@ -14,7 +14,7 @@
     "example": "cross-env nodemon ./example/app.js",
     "busboy": "cross-env nodemon ./example/busboy.js"
   },
-  "author": "",
+  "author": "wjj",
   "license": "ISC",
   "dependencies": {
     "bunyan": "^1.8.12",

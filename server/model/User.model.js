@@ -22,8 +22,9 @@ let UserSchema = new Schema({
 		require: true
 	},
 	tel: {
-		type: Number,
-		unique: true
+		type: String,
+		unique: true,
+		require: true
 	},
 	avatar: {
 		type: String

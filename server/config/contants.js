@@ -3,5 +3,5 @@ exports.CODE_MSG = {
   '201': 'not login',
   '300': 'field error',
   '500': 'server error',
-  '501': 'no permit'
+  '301': 'no permit'
 }

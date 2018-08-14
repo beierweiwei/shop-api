@@ -10,6 +10,7 @@ const errorHandleMiddle = require('./util/error')
 const mongoose = require('./connect')
 const createRes = require('./util/createRes')
 const app = new Koa()
+require('./util/Date')
 
 // 初始化数据
 if (config.seedDB) {

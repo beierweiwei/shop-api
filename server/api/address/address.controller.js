@@ -8,7 +8,6 @@ exports.addAddress = async function (ctx, netx) {
 	const user = ctx.session.user
 	const userId = data.userId
 	user.address = user.address || []
-	console.log(data)
 	try {
 		let address = new Address()
 		address.tel = data.tel

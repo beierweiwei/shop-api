@@ -15,7 +15,15 @@ const ProductPropSchema = new Schema({
 		type: String,
 		unique: true
 	}],
-	sort: Number
+	sort: Number,
+	ctime: {
+		type: Date,
+		default: Date.now
+	},
+	utime: {
+		type: Date,
+		default: Date.now
+	}
 })
 const ProductProp = mongoose.model('ProductProp', ProductPropSchema)
 exports.ProductPropSchema = ProductPropSchema
