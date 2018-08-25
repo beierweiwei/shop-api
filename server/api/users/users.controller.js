@@ -1,7 +1,7 @@
 const mongoose = require('mongoose')
 const User = mongoose.model('User')
 exports.getUserList = async (ctx, next) => {
-	if (!ctx.session.user) {
+	if (!ctx.session.admin) {
 		ctx.body = ctx.createRes(201)
 	} else { 
 		try {
@@ -20,7 +20,7 @@ exports.getUser = async function (ctx, next) {
 	const id = ctx.params.id 
 	if (!id) ctx.body = ctx.createRes(501)
 	try {
-		let result = await User.findOne({_id: id}).select('username tel sex birth address')
+		let result = await User.findOne({_id: id}).select('username tel sex birth address money')
 		ctx.body = ctx.createRes(200, result)
 	}catch(err) {
 		ctx.body = ctx.createRes(500,err.message)
@@ -37,13 +37,14 @@ exports.updateUser = async function (ctx, netx) {
 				username: data.username,
 				password: data.password,
 				sex: data.sex,
-				birth: data.birth
+				birth: data.birth,
+				money: data.money
 			}
 		})
 		ctx.body = ctx.createRes(200, result)
 
 	}catch(err) {
-		ctx.body = ctx.reateRes(500, err.message)
+		ctx.body = ctx.createRes(500, err.message)
 	}
 }
 

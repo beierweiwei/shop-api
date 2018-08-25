@@ -1,5 +1,6 @@
 exports.needLogin = async function(ctx, next) {
-	if (!ctx.session.user) {
+	console.log('xx', ctx.session)
+	if (!ctx.session.admin) {
 			ctx.body = ctx.createRes(201)
 	}else {
 		await next()

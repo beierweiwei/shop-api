@@ -6,7 +6,7 @@ const User = mongoose.model('User')
 exports.addAddress = async function (ctx, netx) {
 	const data = ctx.request.body 
 	const user = ctx.session.user
-	const userId = data.userId
+	const userId = user._id
 	user.address = user.address || []
 	try {
 		let address = new Address()
@@ -16,7 +16,7 @@ exports.addAddress = async function (ctx, netx) {
 		address.detail = data.detail
 		address.areaName = data.areaCode.map(area => area.name).join(',')
 		let result = await address.save()
-		result = await User.findOneAndUpdate({_id: userId}, {$push: {address: address._id}})
+		await User.findOneAndUpdate({_id: userId}, {$push: {address: address._id}})
 
 		ctx.body = ctx.createRes(200, result)
 	}catch(err) {
@@ -30,20 +30,18 @@ exports.deleteAddress = async function (ctx, netx) {
 	// 判断身份,是否是用户本人
 	
 	const data = ctx.request.body
-	const id = ctx.params.id
 	const user = ctx.session.user
-  console.log(await User.findOne({address: id}))
-	// if (user._id.toString() === data.userId) {
-		try {
-			let result = await User.findOneAndUpdate(
-				{_id: user._id}, 
-				{$pull: {address: id}}, 
-			)
-			result = await Address.findOneAndRemove({_id: id})
-			ctx.body = ctx.createRes(200, result)
-		}catch(err) {
-			ctx.body = ctx.createRes(500, err.message)
-		}
+	try {
+		let result = await User.findOneAndUpdate(
+			{_id: user._id}, 
+			{$pull: {address: id}}, 
+		)
+		console.log(result)
+		result = await Address.findOneAndRemove({_id: id})
+		ctx.body = ctx.createRes(200, result)
+	}catch(err) {
+		ctx.body = ctx.createRes(500, err.message)
+	}
 		
 	// } else {
 	// 	ctx.body = ctx.createRes(501)
@@ -70,7 +68,7 @@ exports.editAddress = async function (ctx, netx) {
 
 exports.getUserAddressList = async function (ctx, next) {
 	const user = ctx.session.user
-	const userId = ctx.query.userId
+	const userId = user._id
 	try {
 		const result = await User.findOne({'_id': userId}).populate('address').exec()
 		ctx.body = ctx.createRes(200, result && result.address)
@@ -80,9 +78,10 @@ exports.getUserAddressList = async function (ctx, next) {
 }
 
 exports.getAddress = async function (ctx, next) {
-	const id = ctx.params.id  
+	const id = ctx.session.user._id  
 	try {
-		const result = await Address.findOne({'_id': id})
+		const result = await User.findOne({_id: id}).populate('address').lean()
+		delete result.password 
 		ctx.body = ctx.createRes(200, result)
 	}catch(err) {
 		ctx.body = ctx.createRes(500, err.message)

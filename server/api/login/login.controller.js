@@ -65,7 +65,6 @@ exports.adminLogin = async (ctx, next) => {
 			return ctx.body = ctx.createRes(200, user)
 		}
 	}
-	console.log(user)
 	ctx.body = ctx.createRes(300)
 }
 

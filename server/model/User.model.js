@@ -19,7 +19,7 @@ let UserSchema = new Schema({
 	},
 	sex: {
 		type: Number,
-		require: true
+		default: 0,
 	},
 	tel: {
 		type: String,

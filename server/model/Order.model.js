@@ -15,18 +15,22 @@ let OrderSchema = new Schema({
         type: Date,
         default: Date.now
     },
-    userId: {
+    address: {
+        type: Schema.Types.ObjectId,
+        ref: 'Address'
+    },
+    user: {
         type: Schema.Types.ObjectId,
         ref: 'User',
     },
-    productIds: [
+    products: [
         {
-            ref: 'Product',
+            // ref: 'Product.subProds',
             type: Schema.Types.ObjectId,
         }
     ],
     nums: [],
-    discount_total: Number,
+    discounttotal: Number,
     discount_projects: Array,
     total: Number
 

@@ -10,10 +10,10 @@ const editProduct = async (ctx, next) => {
 	const des = data.des || ''
 	const props = data.props  || '' // 引用库
 	const isSale = data.isSale || 1 
-	const stock = data.stock || 1000
-	const saleNum = data.saleNum || 0
-	const price = data.price  || 0 
-	const mprice = data.mprice || 0 
+	const stock = Math.ceil(data.stock) || 1000
+	const saleNum = Math.ceil(data.saleNum) || 0
+	const price = Number(data.price)  || 0 
+	const mprice = Number(data.mprice) || 0 
 	const detail = data.detail || ''
 	const unit = data.unit || ''// 引用库
 	const cateId =data.cateId// 引用库

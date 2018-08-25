@@ -62,7 +62,7 @@ const ProductSchema = new mongoose.Schema({
 	},
 	subProds: [
 		{
-			// id: Schema.Types.ObjectId,
+			//_id: Schema.Types.ObjectId,
 			props: String,
 			propsIds: [],
 			price: Number,
