@@ -49,6 +49,8 @@ let UserSchema = new Schema({
 		ref: 'Address'
 	}],
 	birth: Date
+}, {
+	usePushEach: true
 })
 
 exports.UserSchema = UserSchema

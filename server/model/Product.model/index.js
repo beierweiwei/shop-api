@@ -60,6 +60,10 @@ const ProductSchema = new mongoose.Schema({
 		type: Date,
 		default: Date.now
 	},
+	utime: {
+		type: Date,
+		default: Date.now	
+	},
 	subProds: [
 		{
 			//_id: Schema.Types.ObjectId,

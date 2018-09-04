@@ -29,7 +29,9 @@ let OrderSchema = new Schema({
             type: Schema.Types.ObjectId,
         }
     ],
-    nums: [],
+    nums: [{
+        type: Number
+    }],
     discounttotal: Number,
     discount_projects: Array,
     total: Number

@@ -1,18 +1,21 @@
 const mongoose = require('mongoose')
 const User = mongoose.model('User')
 exports.getUserList = async (ctx, next) => {
-	if (!ctx.session.admin) {
-		ctx.body = ctx.createRes(201)
-	} else { 
-		try {
-			let count = await User.count()
-			if (count > 0) {
-				const userList = await User.find().exec()
-				ctx.body = ctx.createRes(200, {list: userList, count, user: ctx.session.user})
-			}
-		}catch(err) {
-			ctx.throw(err)
-		}
+	if (!ctx.session.admin) return ctx.body = ctx.createRes(201)
+	let count
+ 	let query = ctx.query
+ 	let sort = ctx.sort
+ 	let pageNum = parseInt(query.pageNum)
+	let pageSize  = parseInt(query.pageSize)
+	pageNum = pageNum && pageNum > 0 ? pageNum : 1
+	pageSize = pageSize && pageSize > 0 ? pageSize : 10
+	try {
+		const count = await User.count()
+		const userList = await User.find().sort(sort).skip((pageNum - 1) * pageSize).limit(pageSize)
+		ctx.body = ctx.createRes(200, {list: userList, count, pageSize, pageNum, count})
+		
+	}catch(err) {
+		ctx.body = ctx.createRes(500, err.message)
 	}
 }
 

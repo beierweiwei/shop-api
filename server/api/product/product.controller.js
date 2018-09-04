@@ -74,12 +74,17 @@ const getProductById = async function (ctx) {
 }
 
 const getProductList = async function (ctx) {
-	const query = ctx.query 
+	const query = ctx.query
+	let sort = query.sort || ''
+	let pageNum = parseInt(query.pageNum)
+  pageNum = pageNum && pageNum > 0 ? pageNum : 1
+	let pageSize  = parseInt(query.pageSize)
+	pageSize = pageSize && pageSize > 0 ? pageSize : 10
 	//先查所有
 	try {
-		let result = await Product.find({}).sort({'ctime': -1}).exec()
+		let result = await Product.find().sort(sort).skip((pageNum - 1) * pageSize).limit(pageSize)
 		let count = await Product.count()
-		if (result) ctx.body = ctx.createRes(200, {list: result, count: count})
+		if (result) ctx.body = ctx.createRes(200, {list: result, count: count, pageNum, pageSize})
 		else ctx.body = ctx.createRes(500, result)
 	}catch (err) {
 		ctx.body = ctx.createRes(500, err.message)

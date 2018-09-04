@@ -56,10 +56,18 @@ const getProductProp = async function (ctx, next) {
 	}
 }
  const getProductPropList = async function (ctx, next) {
- 	let result 
+ 	let result
+ 	let count
+ 	let query = ctx.query
+ 	let sort = ctx.sort
+ 	let pageNum = parseInt(query.pageNum)
+	let pageSize  = parseInt(query.pageSize)
+	pageNum = pageNum && pageNum > 0 ? pageNum : 1
+	pageSize = pageSize && pageSize > 0 ? pageSize : 10
  	try {
- 		result = await ProductProp.find()
- 		if (result) ctx.body = ctx.createRes(200, result)
+ 		result = await ProductProp.find().sort(sort).skip((pageNum - 1) * pageSize).limit(pageSize)
+ 		count = await ProductProp.count()
+ 		if (result) ctx.body = ctx.createRes(200, {list: result, pageSize, pageNum, count})
  	} catch (err) {
  		ctx.body = ctx.createRes(500, err.message)
  	}

@@ -4,11 +4,16 @@ const AddressSchema = require('../../model/Address.model').AddressSchema
 const User = mongoose.model('User')
 
 exports.addAddress = async function (ctx, netx) {
-	const data = ctx.request.body 
+	const data = ctx.request.body || {} 
 	const user = ctx.session.user
-	const userId = user._id
-	user.address = user.address || []
+	const admin = ctx.session.admin
+	let userId
+	if (admin && data.userId) userId = data.userId
+	else if (user) userId = user._id
+	else return ctx.body = ctx.createRes(401, '缺少用户id')
 	try {
+		let userDc = await User.findOne({_id: userId})
+		if (!userDc) return ctx.body = ctx.createRes(401, '未找到用户')
 		let address = new Address()
 		address.tel = data.tel
 		address.name = data.name
@@ -16,27 +21,30 @@ exports.addAddress = async function (ctx, netx) {
 		address.detail = data.detail
 		address.areaName = data.areaCode.map(area => area.name).join(',')
 		let result = await address.save()
-		await User.findOneAndUpdate({_id: userId}, {$push: {address: address._id}})
-
+   console.log(userDc)
+		userDc.address.push([address._id])
+		console.log(userDc)
+		await userDc.save()
 		ctx.body = ctx.createRes(200, result)
 	}catch(err) {
 		ctx.body = ctx.createRes(500, err.message)
 	}
-
 }
-
-
 exports.deleteAddress = async function (ctx, netx) {
 	// 判断身份,是否是用户本人
-	
-	const data = ctx.request.body
+	const data = ctx.request.body || {}
 	const user = ctx.session.user
+	const admin = ctx.session.admin
+	const id = ctx.params.id
+	let userId 
+	if (admin && data.userId) userId = data.userId
+	else if(user) userId = user._id
+	else return ctx.body  = ctx.createRes(401, '缺少用户id')
 	try {
 		let result = await User.findOneAndUpdate(
-			{_id: user._id}, 
+			{_id: userId}, 
 			{$pull: {address: id}}, 
 		)
-		console.log(result)
 		result = await Address.findOneAndRemove({_id: id})
 		ctx.body = ctx.createRes(200, result)
 	}catch(err) {
@@ -67,10 +75,16 @@ exports.editAddress = async function (ctx, netx) {
 }
 
 exports.getUserAddressList = async function (ctx, next) {
-	const user = ctx.session.user
-	const userId = user._id
+	let user = ctx.session.user || {}
+	let admin = ctx.session.admin
+	let query = ctx.query
+	let userId 
+	if (admin && query.userId) userId = query.userId 
+	else if (user) userId = user._id
+	if (!userId) return ctx.body = ctx.createRes(401,  '缺少用户id') 
 	try {
-		const result = await User.findOne({'_id': userId}).populate('address').exec()
+		const result = await User.findOne({'_id': userId}).populate('address')
+		console.log(result)
 		ctx.body = ctx.createRes(200, result && result.address)
 	}catch(err) {
 		ctx.body = ctx.createRes(500, err.message)
