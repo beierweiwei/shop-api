@@ -8,8 +8,11 @@ const {needLogin} = require('../../auth')
 // router.post('/adduser', controller.addUser)
 router.post('/edit/:id', needLogin, ProductController.editProduct)
 router.get('/edit/:id', needLogin, ProductController.getProductById)
-router.get('/list', needLogin, ProductController.getProductList)
+router.get('/list', ProductController.getProductList)
+router.post('/delete/:id', ProductController.deleteProduct)
 
+//批量操作
+router.post('/batch', ProductController.batchAction)
 // 商品分类
 router.post('/cate/remove', CateController.removeProductCate)
 router.get('/cate/:id',CateController.getProductCate)

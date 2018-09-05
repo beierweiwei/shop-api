@@ -5,55 +5,31 @@ const ProductCate = mongoose.model('ProductCate')
 const editProduct = async (ctx, next) => {
 	const data =  ctx.request.body
 	let productId = ctx.params.id
-	const title = data.title || ''
-	const thumbPic = data.thumbPic || []//缩略图，上传组建
-	const des = data.des || ''
-	const props = data.props  || '' // 引用库
-	const isSale = data.isSale || 1 
-	const stock = Math.ceil(data.stock) || 1000
-	const saleNum = Math.ceil(data.saleNum) || 0
-	const price = Number(data.price)  || 0 
-	const mprice = Number(data.mprice) || 0 
-	const detail = data.detail || ''
-	const unit = data.unit || ''// 引用库
-	const cateId =data.cateId// 引用库
-	const shopId = data.shopId
-	let subProds = data.subProds
-	console.log(subProds)
-	let result = {}
-	let productData = {
-		title,
-		thumbPic,
-		des,
-		props,
-		isSale,
-		stock,
-		saleNum,
-		price,
-		mprice,
-		detail,
-		unit,
-		cateId,
-		shopId,
-		subProds
-	}
+	let result
 	productId = productId || 'add'
 
-	// selector = [{
-	// 	props: [{name: 'color', value: 'red'}, {name: 'size', value: 'X'}],
-	// 	stock: 200,
-	// 	price: 2300
-	// }]
 	try {
 		if(productId !== 'add') {
-			const product = await Product.findOne({'_id': productId})
-		  result = await product.update(productData)
-		  
+			let productDc = await Product.findOne({_id: productId})
+			let subProds
+			let saleNum = 0
+			let stock = 0
+			if (data.subProds.length >>> 0) {
+				subProds = [...productDc.subProds, ...data.subProds]
+				subProds.forEach(sub => {
+					saleNum += sub.saleNum
+					stock += sub.stock 
+				})
+				productDc.saleNum = saleNum
+				productDc.stock = stock 
+			}
+			result = await productDc.save()
+			// result = await Product.findOneAndUpdate({_id: productId}, {$set: data})
+
 		}else {
-			result = await Product.create(productData)
+			result = await Product.create(data)
 		}
-		if (result) ctx.body = ctx.createRes(200, result)
-		else ctx.body = ctx.createRes(500, result)
+		ctx.body = ctx.createRes(200, result)
 	}catch(err) {
 		ctx.body = ctx.createRes(500, err.message)
 	}
@@ -82,11 +58,45 @@ const getProductList = async function (ctx) {
 	pageSize = pageSize && pageSize > 0 ? pageSize : 10
 	//先查所有
 	try {
-		let result = await Product.find().sort(sort).skip((pageNum - 1) * pageSize).limit(pageSize)
 		let count = await Product.count()
-		if (result) ctx.body = ctx.createRes(200, {list: result, count: count, pageNum, pageSize})
-		else ctx.body = ctx.createRes(500, result)
+		let result = await Product.find().sort(sort).skip((pageNum - 1) * pageSize).limit(pageSize).lean()
+		ctx.body = ctx.createRes(200, {list: result, count: count, pageNum, pageSize})
 	}catch (err) {
+		ctx.body = ctx.createRes(500, err.message)
+	}
+}
+
+const deleteProduct = async function (ctx) {
+	const productId = ctx.params.id
+	const data = ctx.request.body 
+	if (!productId) ctx.body = ctx.createRes(401)
+	try {
+		const res  = await Product.findOneAndRemove({_id: productId})
+		ctx.body = ctx.createRes(200, res)
+	} catch (err) {
+		ctx.body = ctx.createRes(501, err.message)
+	}
+}
+
+//批量操作接口
+const batchAction = async function (ctx) {
+	const data = ctx.request.body 
+	const actionType = data.actionType
+	const actionField = data.actionField
+	const actionValue = data.actionValue
+	let res 
+	let ids = data.ids
+	ids = Array.isArray(ids) ? ids : []
+	try {
+		if (actionType === 'edit') {
+			const modify = {}
+			modify[actionField] = actionValue
+			res = await Product.updateMany({_id: {$in: ids}}, modify)
+		} else if (actionType === 'delete') {
+			res = await Product.remove({_id: {$in: ids}})
+		}
+		ctx.body = ctx.createRes(200, res)
+	} catch (err) {
 		ctx.body = ctx.createRes(500, err.message)
 	}
 }
@@ -97,7 +107,8 @@ const getProductList = async function (ctx) {
 
 // const removeProductCates = async () {}
 // const removeProductProp = asynce () {}
-
+exports.batchAction = batchAction
 exports.editProduct = editProduct
 exports.getProductById = getProductById
 exports.getProductList = getProductList
+exports.deleteProduct = deleteProduct

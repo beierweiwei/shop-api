@@ -98,7 +98,7 @@ ProductSchema
 		'price': this.price,
 		'mprice': this.mprice,
 		'detail': this.detail,
-		'uniit': this.unit.value,
+		'unit': this.unit.value,
 		'cateId': this.cateIid,
 		'shopId': this.shopId,
 		'ctime': this.ctime
