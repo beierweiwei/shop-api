@@ -58,20 +58,37 @@ const getProductProp = async function (ctx, next) {
  const getProductPropList = async function (ctx, next) {
  	let result
  	let count
- 	let query = ctx.query
- 	let sort = ctx.sort
- 	let pageNum = parseInt(query.pageNum)
-	let pageSize  = parseInt(query.pageSize)
-	pageNum = pageNum && pageNum > 0 ? pageNum : 1
-	pageSize = pageSize && pageSize > 0 ? pageSize : 10
  	try {
- 		result = await ProductProp.find().sort(sort).skip((pageNum - 1) * pageSize).limit(pageSize)
+ 		result = await ProductProp.find()
  		count = await ProductProp.count()
- 		if (result) ctx.body = ctx.createRes(200, {list: result, pageSize, pageNum, count})
+ 		if (result) ctx.body = ctx.createRes(200, result)
  	} catch (err) {
  		ctx.body = ctx.createRes(500, err.message)
  	}
  }
+ //批量操作接口
+const batchAction = async function (ctx) {
+	const data = ctx.request.body 
+	const actionType = data.actionType
+	const actionField = data.actionField
+	const actionValue = data.actionValue
+	let res 
+	let ids = data.ids
+	ids = Array.isArray(ids) ? ids : []
+	try {
+		if (actionType === 'edit') {
+			const modify = {}
+			modify[actionField] = actionValue
+			res = await ProductProp.updateMany({_id: {$in: ids}}, modify)
+		} else if (actionType === 'delete') {
+			res = await ProductProp.remove({_id: {$in: ids}})
+		}
+		ctx.body = ctx.createRes(200, res)
+	} catch (err) {
+		ctx.body = ctx.createRes(500, err.message)
+	}
+}
+ exports.batchAction = batchAction
  exports.removeProductProp = removeProductProp
  exports.updateProductProp = updateProductProp
  exports.getProductProp = getProductProp

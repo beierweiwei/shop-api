@@ -32,22 +32,47 @@ exports.getUser = async function (ctx, next) {
 
 exports.updateUser = async function (ctx, netx) {
 	const userId = ctx.params.id 
-	const data = ctx.request.body 
+	const data = ctx.request.body
+	const accessKeys = ['tel', 'sex', 'birth', 'money', 'block']
+	let tempData = {}
+	Object.keys(data).filter(key => ~accessKeys.indexOf(key) && data[key] !== undefined).forEach(key => tempData[key] = data[key])
 	try {
+		console.log(tempData.birth)
 		const result = await User.findOneAndUpdate({_id: userId}, {
-			$set: {
-				tel: data.tel,
-				username: data.username,
-				password: data.password,
-				sex: data.sex,
-				birth: data.birth,
-				money: data.money
-			}
+			$set: tempData
 		})
 		ctx.body = ctx.createRes(200, result)
 
 	}catch(err) {
 		ctx.body = ctx.createRes(500, err.message)
+	}
+}
+
+//批量操作接口
+exports.updateUsers = async function (ctx) {
+	const data = ctx.request.body 
+	const modify = data.modify
+	let res 
+	let ids = data.ids
+	ids = Array.isArray(ids) ? ids : []
+	try {
+		res = await User.updateMany({_id: {$in: ids}}, {$set: modify})
+		ctx.body = ctx.createRes(200, res)
+	} catch (err) {
+		ctx.body = ctx.createRes(500, err.message)
+	}
+}
+
+exports.deleteUsers = async function (ctx) {
+	const data = ctx.request.body 
+	const ids = data.ids
+	if (!ids) return ctx.body = ctx.createRes(401)
+	ids = Array.isArray(ids) || [ids.toString()]
+	try {
+		let res = await User.remove({_id: {$in: ids}})
+		ctx.body = ctx.createRes(200)
+	} catch (err) {
+		ctx.body = ctx.createRes(501, err.message)
 	}
 }
 

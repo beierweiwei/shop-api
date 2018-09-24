@@ -41,7 +41,7 @@ const getProductCate = async function (ctx, next) {
 
 const getProductCateList = async function (ctx, next) {
 	try {
-		const result = await ProductCate.find().populate('pid').populate('props', 'name')
+		const result = await ProductCate.find().populate('props', 'name')
 
 		if (result) {
 			ctx.body = ctx.createRes(200, result)
@@ -75,8 +75,32 @@ const removeProductCate = async function (ctx, next) {
 		ctx.body = ctx.createRes(500, err.message)
 	}
 }
+
+//批量操作接口
+const batchAction = async function (ctx) {
+	const data = ctx.request.body 
+	const actionType = data.actionType
+	const actionField = data.actionField
+	const actionValue = data.actionValue
+	let res 
+	let ids = data.ids
+	ids = Array.isArray(ids) ? ids : []
+	try {
+		if (actionType === 'edit') {
+			const modify = {}
+			modify[actionField] = actionValue
+			res = await ProductCate.updateMany({_id: {$in: ids}}, modify)
+		} else if (actionType === 'delete') {
+			res = await ProductCate.remove({_id: {$in: ids}})
+		}
+		ctx.body = ctx.createRes(200, res)
+	} catch (err) {
+		ctx.body = ctx.createRes(500, err.message)
+	}
+}
 exports.addProductCate = addProductCate
 exports.getProductCate = getProductCate 
 exports.getProductCateList = getProductCateList
 exports.updateProductCate = updateProductCate
 exports.removeProductCate = removeProductCate
+exports.batchAction = batchAction

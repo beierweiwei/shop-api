@@ -21,9 +21,7 @@ exports.addAddress = async function (ctx, netx) {
 		address.detail = data.detail
 		address.areaName = data.areaCode.map(area => area.name).join(',')
 		let result = await address.save()
-   console.log(userDc)
 		userDc.address.push([address._id])
-		console.log(userDc)
 		await userDc.save()
 		ctx.body = ctx.createRes(200, result)
 	}catch(err) {
@@ -60,7 +58,6 @@ exports.editAddress = async function (ctx, netx) {
 	// 编辑
 	const id = ctx.params.id 
 	const areaCode = ctx.request.body.areaCode
-	console.log(areaCode)
 	const name = ctx.request.body.name
 	const tel = ctx.request.body.tel
 	const detail = ctx.request.body.detail
@@ -92,10 +89,9 @@ exports.getUserAddressList = async function (ctx, next) {
 }
 
 exports.getAddress = async function (ctx, next) {
-	const id = ctx.session.user._id  
+	const id = ctx.params.id  
 	try {
-		const result = await User.findOne({_id: id}).populate('address').lean()
-		delete result.password 
+		const result = await Address.findOne({_id: id})
 		ctx.body = ctx.createRes(200, result)
 	}catch(err) {
 		ctx.body = ctx.createRes(500, err.message)

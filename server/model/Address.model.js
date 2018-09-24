@@ -11,8 +11,14 @@ const AddressSchema = new Schema({
 		require: true 
 	},
 	areaCode:[],
-	areaName: String,
-	detail: String
+	areaName: {
+		type: String,
+		require: true
+	},
+	detail: {
+		type: String,
+		require: true
+	}
 }) 
 
 exports.AddressSchema = AddressSchema

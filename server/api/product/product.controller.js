@@ -10,21 +10,19 @@ const editProduct = async (ctx, next) => {
 
 	try {
 		if(productId !== 'add') {
-			let productDc = await Product.findOne({_id: productId})
-			let subProds
 			let saleNum = 0
 			let stock = 0
+			data.subProds = data.subProds || []
 			if (data.subProds.length >>> 0) {
-				subProds = [...productDc.subProds, ...data.subProds]
-				subProds.forEach(sub => {
-					saleNum += sub.saleNum
-					stock += sub.stock 
+				data.subProds.forEach(sub => {
+					saleNum += Number(sub.saleNum)
+					// console.log(typeof sub.stock, sub.stock, typeof sub.saleNum, sub.saleNum)
+					stock += Number(sub.stock) 
 				})
-				productDc.saleNum = saleNum
-				productDc.stock = stock 
+				data.saleNum = saleNum
+				data.stock = stock
 			}
-			result = await productDc.save()
-			// result = await Product.findOneAndUpdate({_id: productId}, {$set: data})
+			result = await Product.findOneAndUpdate({_id: productId}, {$set: data})
 
 		}else {
 			result = await Product.create(data)
@@ -40,7 +38,7 @@ const getProductById = async function (ctx) {
  let result 
  if (!id) ctx.body = ctx.create(501)
 	try{
-		result = await Product.findOne({'_id': id})
+		result = await Product.findOne({'_id': id}).populate('cateId props')
 		if (result) ctx.body = ctx.createRes(200, result)
 		else ctx.body = ctx.createRes(502)
 	}catch(err) {
@@ -59,7 +57,7 @@ const getProductList = async function (ctx) {
 	//先查所有
 	try {
 		let count = await Product.count()
-		let result = await Product.find().sort(sort).skip((pageNum - 1) * pageSize).limit(pageSize).lean()
+		let result = await Product.find().populate({path: 'cateId', select: "_id name",  options: {sort: {sort: '1'}}}).populate('props').sort(sort).skip((pageNum - 1) * pageSize).limit(pageSize).lean()
 		ctx.body = ctx.createRes(200, {list: result, count: count, pageNum, pageSize})
 	}catch (err) {
 		ctx.body = ctx.createRes(500, err.message)

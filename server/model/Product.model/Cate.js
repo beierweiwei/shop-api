@@ -24,9 +24,10 @@ const ProductCateSchema = new mongoose.Schema({
 		type: Schema.Types.ObjectId,
 		ref: 'ProductProp'
 	}],
-	pid: [{
-		type: Schema.Types.ObjectId,
-	}],
+	level: Number, // 分类级别，最多3级分类
+	pid: {
+		type: String,
+	},
 	utime: {
 		type: Date,
 		default: Date.now

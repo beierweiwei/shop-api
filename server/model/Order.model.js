@@ -16,26 +16,25 @@ let OrderSchema = new Schema({
         default: Date.now
     },
     address: {
-        type: Schema.Types.ObjectId,
-        ref: 'Address'
+        type: Object,
+        require: true,
     },
     user: {
         type: Schema.Types.ObjectId,
         ref: 'User',
     },
-    products: [
-        {
-            // ref: 'Product.subProds',
-            type: Schema.Types.ObjectId,
-        }
-    ],
+    products: [{
+    }],
     nums: [{
         type: Number
     }],
     discounttotal: Number,
     discount_projects: Array,
-    total: Number
+    total: Number,
+    changes: []
 
+}, {
+    usePushEach: true
 })
 module.exports = mongoose.model('Order', OrderSchema)
 exports.OrderSchema = OrderSchema
