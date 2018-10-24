@@ -2,6 +2,7 @@ const mongoose = require('mongoose')
 const Admin = mongoose.model('Admin')
 const User = mongoose.model('User')
 const crypto = require('crypto')
+const svgCaptcha = require('svg-captcha')
 const { secrets } = require('../../config/env/')
 
 // 前台用户登陆
@@ -53,6 +54,9 @@ exports.adminLogin = async (ctx, next) => {
 	const reqData = ctx.request.body
 	// first username
 	let user
+  if (reqData.captcha.toLowerCase() !== ctx.session.captcha.toLowerCase()) {
+    return ctx.body = ctx.createRes(300)
+  }
 	if(reqData.username && reqData.password) {
 		try {
 			user = await Admin.findOne({username: reqData.username}, 'username password role permit').lean()
@@ -84,3 +88,16 @@ exports.adminRegist = async (ctx, next) => {
 		ctx.body = ctx.createRes(300)
 	}
 }
+exports.crateValidateCode = async (ctx, next) => {
+  let ary = svgCaptcha.create();
+  let txt = ary.text
+  let buf = ary.data
+  ctx.type = 'svg'
+  ctx.session.captcha = txt 
+  console.log(ctx.session.captcha)
+  ctx.body = buf 
+}
+
+// exports.validateCode = async (ctx, netx) => {
+//
+// }

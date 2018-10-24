@@ -8,6 +8,7 @@
 const mongoose = require('mongoose')
 const	User = mongoose.model('User')
 const Area = mongoose.model('Area')
+const Admin = mongoose.model('Admin')
 // const Business = mongoose.model('Bussiness')
 // const Order = mongoose.model('Order')
 // const Product = mongoose.model('Product')
@@ -18,26 +19,37 @@ const logger = require('../util/logs').logger
 // 初始化标签,文章,用户
 module.exports = async ()=>{
 	const UserCount = await User.count();
-	try {
-		if(UserCount === 0) {
-			await User.create({
-				username: 'wangwang',
-				sex: 0,
-				tel: '12368132987',
-				address: 'xxxxxxxx',
-				openid: '123',
-				money: 1000
-			})
-		}
-	}catch(err) {
-		console.log(err)
-	}
+  try {
+    if (!await Admin.count()) {
+      await Admin.create({
+        username: 'admin',
+        password: '6a10723e31a80db923770bedf80c0561'
+      })
+    }
+  }catch(err) {
+    // ctx.creaRes(500, err.message)
+    console.log(err.message)
+  }
+	// try {
+    // if(UserCount === 0) {
+			// await User.create({
+				// username: 'wangwang',
+				// sex: 0,
+				// tel: '12368132987',
+				// address: 'xxxxxxxx',
+				// openid: '123',
+				// money: 1000
+			// })
+		// }
+	// }catch(err) {
+		// console.log(err)
+	// }
 	try {
 		const AreaCount = await Area.count()
 		if (AreaCount === 0) {
 			const AreaData = require('./DB/areadb')()
 			const resutl = await Area.create(AreaData)
-			console.log(resutl)	
+			// console.log(resutl)
 		}
 
 	}catch(err) {
