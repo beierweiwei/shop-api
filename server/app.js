@@ -3,7 +3,7 @@
 //设置环境变量
 process.env.NODE_ENV = process.env.NODE_ENV || 'development'
 
-const Koa = require('Koa')
+const Koa = require('koa')
 const config = require('./config/env')
 const logger = require('./util/logs')
 const errorHandleMiddle = require('./util/error')
@@ -29,7 +29,6 @@ app.use(async(ctx, next) => {
 app.use(errorHandleMiddle())
 require('./config/koa')(app)
 require('./routes')(app)
-
 
 //错误监听
 app.on('error', (err, ctx) => {

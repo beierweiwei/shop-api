@@ -30,6 +30,11 @@ let OrderSchema = new Schema({
     }],
     discounttotal: Number,
     discount_projects: Array,
+    trak: {
+      no: String,
+      company: String,
+      freight: Number // 运费
+    },
     total: Number,
     changes: []
 
