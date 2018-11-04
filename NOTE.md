@@ -466,8 +466,8 @@ X-Response-Time middleware for Koa v2.
 [理解OAuth 2.0](http://www.ruanyifeng.com/blog/2014/05/oauth_2_0.html)
 [理解jwt](http://www.haomou.net/2014/08/13/2014_bare_token/)
 
-### 跨平台使用命令
-`kcors`
+### 跨域
+`cors`
 [https://github.com/koajs/cors](https://github.com/koajs/cors)
 
 ## redis
