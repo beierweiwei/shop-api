@@ -23,7 +23,8 @@ module.exports = async (ctx, next)=>{
     if (!await Admin.count()) {
       await Admin.create({
         username: 'admin',
-        password: '6a10723e31a80db923770bedf80c0561'
+        password: '6a10723e31a80db923770bedf80c0561',
+        level: 0
       })
     }
   }catch(err) {

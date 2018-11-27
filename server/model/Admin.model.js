@@ -11,13 +11,25 @@ const AdminSchema = new Schema({
 		type: String,
 		require: true 
 	},
-	role: {
-		type: Number,
-		require: true 
+	tel: {
+		type: Number
 	},
-	permit: [{
-		type: String
-	}]
+	level: {
+		type: Number,
+		require: true,
+		default: 2
+	},
+	block: {
+		type: Number,
+		default: 1
+	},
+	permission: [{
+		type: Object
+	}],
+	role: {
+		type: Schema.Types.ObjectId,
+		ref: 'Role'
+	}
 })
 
 const AdminModel = mongoose.model('Admin', AdminSchema)

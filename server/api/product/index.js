@@ -4,14 +4,14 @@ const router = require('koa-router')()
 const ProductController = require('./product.controller')
 const CateController = require('./cate.controller')
 const PropController = require('./prop.controller')
-const {needLogin} = require('../../auth')
+const { hasRequestPermit } = require('../../middleware')
 
 
 // 商品分类
-router.post('/cate/batch', CateController.batchAction)
+router.post('/cate/batch', hasRequestPermit('product.cate.update'), CateController.batchAction)
 router.post('/cate/remove', CateController.removeProductCate)
-router.get('/cate/:id',CateController.getProductCate)
-router.post('/cate/:id', CateController.addProductCate)
+router.get('/cate/:id',  CateController.getProductCate)
+router.post('/cate/:id', hasRequestPermit('product.cate.update'), CateController.addProductCate)
 router.get('/cate', CateController.getProductCateList)
 
 // router.get('/cate/:id/props', CateController.getPropsByCateId)
@@ -27,10 +27,10 @@ router.post('/prop/:id', PropController.updateProductProp)
 // // router.post('/adduser', controller.addUser)
 //批量操作
 router.post('/batch', ProductController.batchAction)
-router.post('/:id', needLogin, ProductController.editProduct)
+router.post('/:id', hasRequestPermit('product.product.update'), ProductController.editProduct)
 router.get('/list', ProductController.getProductList)
-router.get('/:id', needLogin, ProductController.getProductById)
-router.post('/delete/:id', ProductController.deleteProduct)
+router.get('/:id', ProductController.getProductById)
+router.post('/delete/:id', hasRequestPermit('product.product.delete'), ProductController.deleteProduct)
 
 module.exports = router
 

@@ -7,7 +7,6 @@ const Address = mongoose.model('Address')
 exports.createOrder = async function (ctx) {{
 	const data = ctx.request.body
 	let user = ctx.session.user
-	if (!user) return ctx.body = ctx.createRes(201)
 	let order = new Order()
 	let total = 0
 	order.orderNo = new Date().format('yyMMddhhmmss') + Math.random().toString().slice(2, 7);
@@ -172,13 +171,17 @@ exports.createPay = async function (ctx) {
 exports.updateOrders = async function (ctx) {
 	const data = ctx.request.body
 	let ids = data.ids
-	const mondify = data.modify 
+	const mondify = data.modify
+	let tempData = {}
+	const accessField = ['status'].filter(item => {
+		tempData[item] = mondify[item]
+	}) 
 	if (!ids) return ctx.body = ctx.createRes(401)
 	try {
 		ids = Array.isArray(ids) ? ids : [ids]
 		let res  = await Order.findManyAndUpdate({_id: {
 			$in: ids
-		}}, {$set: modify})
+		}}, {$set: tempData})
 		ctx.body = ctx.createRes(200, res)
 	} catch (err) {
 		ctx.body = ctx.createRes(501, err.message)
@@ -194,7 +197,6 @@ exports.updateOrder = async function (ctx) {
 		if (data.change) {
 			let changeTotal = Math.floor(data.change * 100)/100
 			if (!changeTotal) return ctx.body = ctx.createRes(401)
-			console.log(changeTotal)
 			orderDc.total = orderDc.total + changeTotal 
 			if (orderDc.total < 0) ctx.body = ctx.createRes(401, 
 				'总金额不能小于0')
@@ -223,7 +225,59 @@ exports.deleteOrders = async function (ctx) {
 		ctx.body = ctx.createRes(501, err.message)
 	}
 }
-
+// 取消，删除，退货 订单状态修改
 exports.updateMyOrder = async function (ctx) {
-
+	const data = ctx.request.body 
+	const id = data.id 
+	const userId = ctx.session.user._id
+	const accessModifyStatus = [0, 3, 4]
+	let tempData = {}
+	['status'].filter(field => {
+		tempData[field] = data[field]
+	})
+	const status = tempData.status
+	if (status) {
+		tempData.status = status = parseInt(status)
+		if (!~accessModifyStatus.indexOf(status)) {
+			ctx.body = ctx.createRes(401)
+		}
+	}
+	if (!id) ctx.body = ctx.createRes(401)
+	
+	try {
+		let orderDc = await Order.findOne({_id: id})
+		if (tempData.status && tempData.status < orderDc.status) ctx.body = ctx.createRes(401)
+		orderDc.status = data.status 
+		let res = await orderDc.save() 
+		ctx.body = ctx.createRes(200, res)
+	} catch (err) {
+		ctx.body = ctx.createRes(500, err.message)
+	}
 }
+
+exports.getMyOrder = async function (ctx) {
+	const orderId = ctx.params.id
+	const user = ctx.session.user 
+	if (!orderId) return ctx.body = ctx.createRes(401)
+	try {
+		let res = await Order.findOne({_id: orderId, user: user._id})
+		ctx.body = ctx.createRes(200, res)
+	} catch (err) {
+		ctx.body = ctx.createRes(500, err.message)
+	}
+}
+
+exports.getMyOrderList = async function (ctx) {
+	const {pageSize = 10, curtPage = 1, sort} = ctx.request.query 
+	pageSize = parseInt(pageSize)
+	curtPage = parseInt((curtPage))
+	const user = ctx.session.user 
+	try {
+		let res = await Order.findOne({user: user._id}).skip(pageSize * (curtPage -1)).limte(pageSize).sort(sort)
+		ctx.body = ctx.createRes(200, res)
+	} catch (err) {
+		ctx.body = ctx.createRes(500, err.message)
+	}
+}
+
+

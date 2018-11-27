@@ -20,8 +20,15 @@ exports.getUserList = async (ctx, next) => {
 }
 
 exports.getUser = async function (ctx, next) {
-	const id = ctx.params.id 
-	if (!id) ctx.body = ctx.createRes(501)
+	const id = ctx.params.id
+	const admin = ctx.session.admin
+	const user = ctx.session.user
+	if (user && !admin) {
+		if (id != user._id.toString()) {
+			ctx.body = ctx.createRes(404)
+		}
+	}
+	if (!id) ctx.body = ctx.createRes(500)
 	try {
 		let result = await User.findOne({_id: id}).select('username tel sex birth address money')
 		ctx.body = ctx.createRes(200, result)
@@ -30,15 +37,18 @@ exports.getUser = async function (ctx, next) {
 	}
 }
 
-exports.updateUser = async function (ctx, netx) {
-	const userId = ctx.params.id 
+//批量操作接口
+exports.updateUser = async function (ctx) {
 	const data = ctx.request.body
 	const accessKeys = ['tel', 'sex', 'birth', 'money', 'block']
+	let id = data.id
+	id = typeof id === 'string' ? [id] : id
+	id = [...id]
+	delete data.id 
 	let tempData = {}
 	Object.keys(data).filter(key => ~accessKeys.indexOf(key) && data[key] !== undefined).forEach(key => tempData[key] = data[key])
 	try {
-		console.log(tempData.birth)
-		const result = await User.findOneAndUpdate({_id: userId}, {
+		const result = await User.updateMany({_id: {$in: id}}, {
 			$set: tempData
 		})
 		ctx.body = ctx.createRes(200, result)
@@ -48,32 +58,46 @@ exports.updateUser = async function (ctx, netx) {
 	}
 }
 
-//批量操作接口
-exports.updateUsers = async function (ctx) {
+exports.deleteUser = async function (ctx) {
 	const data = ctx.request.body 
-	const modify = data.modify
-	let res 
-	let ids = data.ids
-	ids = Array.isArray(ids) ? ids : []
+	let id = data.id
+	id = typeof id === 'string' ? [id] : id
 	try {
-		res = await User.updateMany({_id: {$in: ids}}, {$set: modify})
+		let res = await User.remove({_id: {$in: id}})
 		ctx.body = ctx.createRes(200, res)
 	} catch (err) {
 		ctx.body = ctx.createRes(500, err.message)
 	}
 }
-
-exports.deleteUsers = async function (ctx) {
-	const data = ctx.request.body 
-	const ids = data.ids
-	if (!ids) return ctx.body = ctx.createRes(401)
-	ids = Array.isArray(ids) || [ids.toString()]
+// user
+exports.getMe = async function (ctx) {
+	let user = ctx.session.user || {}
+	let id = user._id 
+	let res 
 	try {
-		let res = await User.remove({_id: {$in: ids}})
-		ctx.body = ctx.createRes(200)
+		res = await User.findOne({_id: id}).select('-password')
+		res = res || {}
 	} catch (err) {
-		ctx.body = ctx.createRes(501, err.message)
+		ctx.body = ctx.createRes(500)
 	}
+	ctx.body = ctx.createRes(200, {data: res})
+}
+
+exports.updateMe = async function (ctx) {
+	let user = ctx.session.user || {}
+	let id = user._id
+	let data = ctx.request.body
+	let res 
+	['money', 'username', 'block'].forEach(path => {
+		if (data[path]) delete data[path]
+	})
+
+	// try {
+	// 	res = await User.findOneAndUpdate({_id: id}, {$set: data})
+	// } catch (err) {
+	// 	ctx.body = ctx.createRes(500)
+	// }
+	ctx.body = ctx.createRes(200, {data: res})
 }
 
 // // 关于收货地址
