@@ -53,9 +53,10 @@ exports.adminLogin = async (ctx, next) => {
 	const md5 = crypto.createHash('md5')
 	const reqData = ctx.request.body
 	// first username
+	console.log(reqData)
 	let user
-  if (!reqData.captcha || reqData.captcha.toLowerCase() !== ctx.session.captcha.toLowerCase()) {
-    return ctx.body = ctx.createRes(300)
+  if (!reqData.validateCode || reqData.validateCode.toLowerCase() !== ctx.session.captcha.toLowerCase()) {
+    return ctx.body = ctx.createRes(300, '验证码错误！')
   }
 	if(reqData.username && reqData.password) {
 		try {
@@ -67,9 +68,11 @@ exports.adminLogin = async (ctx, next) => {
 			delete user.password
 			ctx.session.admin = user
 			return ctx.body = ctx.createRes(200, user)
+		} else {
+			ctx.body = ctx.createRes(300, '帐号或密码错误！')
 		}
 	}
-	ctx.body = ctx.createRes(300)
+	ctx.body = ctx.createRes(300, '帐号或密码错误！')
 }
 
 exports.adminRegist = async (ctx, next) => {
@@ -98,3 +101,11 @@ exports.crateValidateCode = async (ctx, next) => {
 }
 
 
+exports.info = async function (ctx, next) {
+	let admin = ctx.session.admin 
+	if (admin) {
+		ctx.body = ctx.createRes(200, admin)
+	}else {
+		ctx.body = ctx.createRes(201)
+	}
+}

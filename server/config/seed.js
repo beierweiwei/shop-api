@@ -30,20 +30,6 @@ module.exports = async ()=>{
     // ctx.creaRes(500, err.message)
     console.log(err.message)
   }
-	// try {
-    // if(UserCount === 0) {
-			// await User.create({
-				// username: 'wangwang',
-				// sex: 0,
-				// tel: '12368132987',
-				// address: 'xxxxxxxx',
-				// openid: '123',
-				// money: 1000
-			// })
-		// }
-	// }catch(err) {
-		// console.log(err)
-	// }
 	try {
 		const AreaCount = await Area.count()
 		if (AreaCount === 0) {

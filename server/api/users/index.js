@@ -9,4 +9,6 @@ router.post('/delete', controller.deleteUsers)
 router.get('/list', controller.getUserList)
 router.get('/:id', controller.getUser)
 router.post('/:id', controller.updateUser)
+router.post('/login', controller.login)
+router.post('/regist', controller.regist)
 module.exports = router

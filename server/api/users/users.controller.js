@@ -76,6 +76,50 @@ exports.deleteUsers = async function (ctx) {
 	}
 }
 
+
+// 前台用户
+// 前台用户登陆
+exports.login = async (ctx, next) => {
+	const md5 = crypto.createHash('md5')
+	const reqData = ctx.request.body
+	// first username
+	let user
+	if(reqData.username && reqData.password) {
+		try {
+			
+			user = await User.findOne({username: reqData.username}, 'username password tel sex').lean()
+		}catch(err) {
+			console.log(err)
+			ctx.body = ctx.createRes(300, err.message)
+		}
+		if (user && user.password === md5.update(reqData.password + secrets).digest('hex')) {
+			ctx.session.user = user
+			delete user.password
+			return ctx.body = ctx.createRes(200, user)
+		}else {
+			ctx.createRes(300)
+		}
+	}
+	ctx.body = ctx.createRes(300)
+}
+
+exports.regist = async (ctx, next) => {
+	const data  = ctx.request.body
+	const md5 = crypto.createHash('md5')
+	if (data.username && data.password) {
+		data.password = md5.update(data.password + secrets).digest('hex')
+		try {
+			res = await User.create(data)
+			ctx.session.user = res
+			ctx.body = ctx.createRes(200)
+		}catch(err) {
+			ctx.body = ctx.createRes(500)
+		}
+	}else {
+		ctx.body = ctx.createRes(300)
+	}
+}
+
 // // 关于收货地址
 // exports.addAddress = async function (ctx, netx) {
 	
