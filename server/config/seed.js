@@ -1,7 +1,7 @@
 /**
  * 初始化数据
  * 管理员用户
- * email: admin@admin.com
+ * email: admin
  * password: admin
  */
 'use strict'
@@ -9,6 +9,7 @@ const mongoose = require('mongoose')
 const	User = mongoose.model('User')
 const Area = mongoose.model('Area')
 const Admin = mongoose.model('Admin')
+const Postage = mongoose.model('Postage')
 // const Business = mongoose.model('Bussiness')
 // const Order = mongoose.model('Order')
 // const Product = mongoose.model('Product')
@@ -16,9 +17,8 @@ const Admin = mongoose.model('Admin')
 
 const logger = require('../util/logs').logger
 
-// 初始化标签,文章,用户
-module.exports = async ()=>{
-	const UserCount = await User.count();
+// 初始化
+module.exports = async (ctx, next)=>{
   try {
     if (!await Admin.count()) {
       await Admin.create({
@@ -41,7 +41,65 @@ module.exports = async ()=>{
 	}catch(err) {
 		console.log(err)
 	}
-	
-
-// 初始化	
+	// 运费
+	try {
+		const postageCount = await Postage.count()
+		if (!postageCount) {
+			const areaDoc = await Area.findOne({_id: '100000'})
+			const princes = areaDoc.children
+			const postageData = Object.keys(princes).map((princeCode) => {
+				return {
+					_id: princeCode,
+					company: [
+						{
+							name: '圆通',
+							price: 10,
+							increacePrice: 5 
+						},
+						{
+							name: '顺丰',
+							price: 15,
+							increacePrice: 5 
+						},
+						{
+							name: '圆通',
+							price: 10,
+							increacePrice: 5 
+						},
+						{
+							name: '申通',
+							price: 10,
+							increacePrice: 5 
+						},
+						{
+							name: '中通',
+							price: 10,
+							increacePrice: 5 
+						},
+						{
+							name: '百世汇通',
+							price: 10,
+							increacePrice: 5 
+						},
+						{
+							name: '邮政EMS',
+							price: 10,
+							increacePrice: 5 
+						},
+						{
+							name: '韵达',
+							price: 10,
+							increacePrice: 5 
+						}																																				
+					],
+					name: princes[princeCode],
+					default: 0,
+					status: 1
+				}
+			})
+			const res = await Postage.create(postageData)
+		}
+	} catch (err) {
+		console.log(err.message)
+	}	
 }

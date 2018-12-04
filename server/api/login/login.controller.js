@@ -54,8 +54,8 @@ exports.adminLogin = async (ctx, next) => {
 	const reqData = ctx.request.body
 	// first username
 	let user
-  if (!reqData.captcha || reqData.captcha.toLowerCase() !== ctx.session.captcha.toLowerCase()) {
-    return ctx.body = ctx.createRes(300)
+  if (!reqData.validateCode || reqData.validateCode.trim().toLowerCase() !== ctx.session.captcha.trim().toLowerCase()) {
+    return ctx.body = ctx.createRes(300, '验证码错误')
   }
 	if(reqData.username && reqData.password) {
 		try {
