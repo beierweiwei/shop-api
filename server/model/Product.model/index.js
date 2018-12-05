@@ -3,22 +3,22 @@ const Schema = mongoose.Schema
 const ProductSchema = new mongoose.Schema({
 	title: {
 		type: String,
-		require: true,
+		required: true,
 		max: 30
 	},
-	thumbPic: {
-		type: Array,
-		require: true 
-	},
+	thumbPic: [{
+		type: String,
+		required: true 
+	}],
 	des: {
 		type: String,
-		require: true,
+		required: true,
 		max: 50
 	},
 	props: [{
 		type:  Schema.Types.ObjectId,
 		ref: 'ProductProp',
-		require: true
+		required: true
 	}],
 	isSale: {
 		type: Number,
@@ -26,7 +26,7 @@ const ProductSchema = new mongoose.Schema({
 	},
 	stock: {
 		type: Number,
-		require: true
+		required: true
 	},
 	saleNum: {
 		type: Number,
@@ -34,26 +34,26 @@ const ProductSchema = new mongoose.Schema({
 	},
 	price: {
 		type: String,
-		require: true 
+		required: true 
 	},
 	mprice: {
 		type: String,
-		require: true 
+		required: true 
 	},
 	detail: {
 		type: String,
-		require: true 
+		required: true 
 	},
 	unit: {
 		// type: Schema.Types.ObjectId,
 		// ref: 'ProductUnit'
 		type: String,
-		require: true 
+		required: true 
 	},
 	cateId: {
 		type: Schema.Types.ObjectId,
 		ref: 'ProductCate',
-		require: true 
+		required: true 
 	},
 	shopId: {
 		type: String,
@@ -73,11 +73,11 @@ const ProductSchema = new mongoose.Schema({
 			propItems: String,
 			price: {
 				type: Number,
-				require: true
+				required: true
 			},
 			stock: {
 				type: Number,
-				require: true 
+				required: true 
 			},
 			saleNum: {
 				type: Number,

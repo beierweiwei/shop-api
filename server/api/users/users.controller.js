@@ -91,12 +91,11 @@ exports.updateMe = async function (ctx) {
 	['money', 'username', 'block'].forEach(path => {
 		if (data[path]) delete data[path]
 	})
-
-	// try {
-	// 	res = await User.findOneAndUpdate({_id: id}, {$set: data})
-	// } catch (err) {
-	// 	ctx.body = ctx.createRes(500)
-	// }
+	try {
+		res = await User.findOneAndUpdate({_id: id}, {$set: data})
+	} catch (err) {
+		ctx.body = ctx.createRes(500)
+	}
 	ctx.body = ctx.createRes(200, {data: res})
 }
 

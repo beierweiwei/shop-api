@@ -4,19 +4,19 @@ const Schema = mongoose.Schema
 const paySchema = new Schema({
 	amount: {
 		type: Number,
-		require: true
+		required: true
 	},
 	order: {
 		type: Schema.Types.ObjectId,
-		require: true
+		required: true
 	},
 	user: {
 		type: Schema.Types.ObjectId,
-		require: true
+		required: true
 	},
 	ctime: {
 		type: Date,
-		require: true,
+		required: true,
 		default: Date.now 
 	},
 	ptime: { //支付时间
@@ -24,6 +24,7 @@ const paySchema = new Schema({
 	},
 	platform: {
 		type: Number,
+		required: true,
 		default: 0, // 0: 账号余额1:支付宝 2:微信 
 	},
 	shop: {

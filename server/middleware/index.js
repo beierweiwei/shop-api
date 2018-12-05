@@ -4,7 +4,6 @@ exports.hasEditAminPermit = function (ctx, next) {
 	const user = ctx.session.admin
 	const role = user.role || {}
 	const level = user.level
-	console.log(level < 2 || role.level < 2)
 	if (level < 2 || role.level < 2) return next()
 	else ctx.body = ctx.createRes(203)
 }

@@ -3,12 +3,12 @@ let Schema = mongoose.Schema
 let OrderSchema = new Schema({
     orderNo: {
         type: String,
-        require: true,
+        required: true,
         unique: true
     },
     status: {
         type: Number,
-        require: true,
+        required: true,
         default: 0  // 0: 未支付 1: 代发货 2: 待收货 3: 已完成 4: 申请退货中 5: 退货中
     },
     ctime: {
@@ -17,7 +17,7 @@ let OrderSchema = new Schema({
     },
     address: {
         type: Object,
-        require: true,
+        required: true,
     },
     user: {
         type: Schema.Types.ObjectId,

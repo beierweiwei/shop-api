@@ -29,7 +29,6 @@ exports.createAddress = async function (ctx, netx) {
 	}
 }
 exports.deleteAddress = async function (ctx, netx) {
-	// 判断身份,是否是用户本人
 	const data = ctx.request.body || {}
 	const id = data.id 
 	try {

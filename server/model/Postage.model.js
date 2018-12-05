@@ -3,21 +3,37 @@ const Schema = mongoose.Schema
 const PostSchema = new Schema({
 	_id: {
 		type: String,//地区（省份）编码
-		default: 0
+		default: 0,
+		required: true
 	},
-	name: String,
+	name: {
+		type: String,
+		required: true
+	},
 	company: [{
-		name: String,
-		price: Number,
-		increacePrice: Number
+		name: {
+			type: String,
+			required: true
+		},
+		price: {
+			type: Number,
+			default: 0,
+			required: true
+		},
+		increacePrice: {
+			type: Number,
+			default: 0
+		}
 	}],
 	default: {
 		type: Number,
-		default: 0
+		default: 0,
+		required: true
 	},
 	status: {
 		type: Number,
-		default: 0
+		default: 0,
+		required: true
 	}
 })
 exports.PostAge = PostSchema

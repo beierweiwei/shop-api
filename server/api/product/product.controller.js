@@ -36,7 +36,7 @@ const editProduct = async (ctx, next) => {
 const getProductById = async function (ctx) {
  const id = ctx.params.id
  let result 
- if (!id) ctx.body = ctx.create(501)
+ if (!id) ctx.body = ctx.create(500)
 	try{
 		result = await Product.findOne({'_id': id}).populate('cateId props')
 		if (result) ctx.body = ctx.createRes(200, result)
@@ -72,7 +72,7 @@ const deleteProduct = async function (ctx) {
 		const res  = await Product.findOneAndRemove({_id: productId})
 		ctx.body = ctx.createRes(200, res)
 	} catch (err) {
-		ctx.body = ctx.createRes(501, err.message)
+		ctx.body = ctx.createRes(500, err.message)
 	}
 }
 

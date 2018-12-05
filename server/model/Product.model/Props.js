@@ -10,12 +10,18 @@ const ProductPropSchema = new Schema({
 		type: String,
 		unique: true
 	},
-	isMulit: Number,
+	isMulit: { //是否多选： 0 否 1是
+		type: Number,
+		default: 0
+	},
 	selector: [{
 		type: String,
 		unique: true
 	}],
-	sort: Number,
+	sort: {
+		type: Number,
+		default: 0
+	},
 	ctime: {
 		type: Date,
 		default: Date.now

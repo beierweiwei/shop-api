@@ -24,7 +24,6 @@ exports.getList = async function (ctx, next) {
 		try {
 			count = await Role.count()
 			res = await Role.find({level: {$gt: level}})
-			console.log(res)
 			ctx.body = ctx.createRes(200, {list: res, count})
 		} catch (err) {
 			ctx.body = ctx.createRes(500, err.message)

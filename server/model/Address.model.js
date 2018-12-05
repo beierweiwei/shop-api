@@ -4,20 +4,23 @@ const Schema = mongoose.Schema
 const AddressSchema = new Schema({
 	tel: {
 		type: String,
-		require: true
+		required: true
 	},
 	name: {
 		type: String,
-		require: true 
+		required: true 
 	},
-	areaCode:[],
+	areaCode:{
+		type: Array,
+		required: true
+	},
 	areaName: {
 		type: String,
-		require: true
+		required: true
 	},
 	detail: {
 		type: String,
-		require: true
+		required: true
 	}
 }) 
 

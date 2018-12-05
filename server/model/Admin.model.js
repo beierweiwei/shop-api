@@ -5,18 +5,19 @@ const AdminSchema = new Schema({
 	username: {
 		type: String,
 		unique: true,
-		require: true 
+		required: true 
 	},
 	password: {
 		type: String,
-		require: true 
+		required: true 
 	},
 	tel: {
-		type: Number
+		type: Number,
+		unique: true
 	},
 	level: {
 		type: Number,
-		require: true,
+		required: true,
 		default: 2
 	},
 	block: {
