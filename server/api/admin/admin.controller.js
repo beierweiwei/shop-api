@@ -72,6 +72,7 @@ exports.adminLogin = async (ctx, next) => {
 
 exports.adminRegist = async (ctx, next) => {
 	const md5 = crypto.createHash('md5')
+	if (ctx.session.admin.role < 100) return ctx.body = ctx.createRes(301)
 	const data  = ctx.request.body
 	if (data.username && data.password) {
 		data.password = md5.update(data.password + secrets).digest('hex')
@@ -177,3 +178,12 @@ async function validateLevel (ids, level, ctx) {
 // exports.validateCode = async (ctx, netx) => {
 //
 // }
+
+exports.info = async function (ctx, next) {
+	let admin = ctx.session.admin 
+	if (admin) {
+		ctx.body = ctx.createRes(200, admin)
+	}else {
+		ctx.body = ctx.createRes(201)
+	}
+}

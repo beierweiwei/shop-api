@@ -14,4 +14,5 @@ router.get('/:id', hasEditAminPermit, adminController.getOne)
 router.post('/update', hasEditAminPermit, adminController.update)
 router.post('/delete', hasEditAminPermit, adminController.delete)
 router.post('/info', hasAdminLogin, adminController.getInfo)
+router.post('/info', adminController.info)
 module.exports = router
