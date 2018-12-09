@@ -60,8 +60,10 @@ exports.countAll = async (ctx, next) => {
 }
 
 exports.countOrderStatisticsByTime = async (ctx, next) => {
-	let data = ctx.request.body
-	let {startTime = Date.now() - Date.now() % 86400, endTime = Date.now()} = {  data }
+	let data = ctx.request.query
+	let startTime = data.startTime ||  Date.now() - Date.now() % 86400
+	let endTime = data.endTime || Date.now()
+	console.log(data, startTime, endTime)
 	try {
 		let o = {}
 		o.map = function () {
