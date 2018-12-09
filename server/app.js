@@ -2,7 +2,9 @@
 
 //设置环境变量
 process.env.NODE_ENV = process.env.NODE_ENV || 'development'
+// process.env.TZ = 'Asia/Shanghai' 
 
+console.log(new Date().getHours())
 const Koa = require('koa')
 const config = require('./config/env')
 const logger = require('./util/logs')

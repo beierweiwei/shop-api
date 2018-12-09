@@ -10,6 +10,7 @@ const Cart = require('./api/Cart/cart.controller')
 const Postage = require('./api/postage')
 const Article = require('./api/Article')
 const Permission = require('./api/permission')
+const Statistics = require('./api/statistics')
 module.exports = function (app) {
 		Router.use('/', Upload.routes(), Upload.allowedMethods())
 		Router.use('/user', Users.routes(), Users.allowedMethods())
@@ -22,6 +23,7 @@ module.exports = function (app) {
     Router.use('/postage', Postage.routes(), Postage.allowedMethods())
     Router.use('/article', Article.routes(), Article.allowedMethods())
     Router.use('/permission', Permission.routes(), Permission.allowedMethods())
+    Router.use('/statistics', Statistics.routes(),  Statistics.allowedMethods())
 		Router.get('/*', (ctx,next)=> {
 			ctx.body = {status:'success',data:'请求接口不存在！'}
 		})
