@@ -53,7 +53,7 @@ exports.adminLogin = async (ctx, next) => {
 	// first username
 	let user
   if (!reqData.validateCode || reqData.validateCode.trim().toLowerCase() !== ctx.session.captcha.trim().toLowerCase()) {
-    return ctx.body = ctx.createRes(401, '验证码错误')
+    return ctx.body = ctx.createRes(401, null, '验证码错误')
   }
 	if(reqData.username && reqData.password) {
 		try {
@@ -65,6 +65,8 @@ exports.adminLogin = async (ctx, next) => {
 			delete user.password
 			ctx.session.admin = user
 			return ctx.body = ctx.createRes(200, user)
+		} else {
+			return ctx.body = ctx.createRes(300, null, '账号或密码错误！')
 		}
 	}
 	ctx.body = ctx.createRes(401)
