@@ -8,6 +8,8 @@ router.get('/my', hasUserLogin, controller.getMyOrder)
 router.get('/my/:id', hasUserLogin, controller.getMyOrderList)
 router.post('/my', hasUserLogin, controller.updateMyOrder)
 //router.post('/:id', controller.createOrder)
+router.get('/search', controller.search)
+
 router.post('/delete/', hasRequestPermit('order.order.delete'), controller.deleteOrders)
 router.post('/delete/:id', hasRequestPermit('order.order.delete'), controller.deleteOrder)
 router.post('/update/', hasRequestPermit('order.order.update'), controller.updateOrders)

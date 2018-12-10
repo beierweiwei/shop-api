@@ -1,4 +1,5 @@
 const mongoose = require('mongoose')
+const escapeSearch = require('../../util/escape')
 const Order = mongoose.model('Order')
 const Product = mongoose.model('Product')
 const User = mongoose.model('User')
@@ -224,6 +225,38 @@ exports.deleteOrders = async function (ctx) {
 	} catch (err) {
 		ctx.body = ctx.createRes(501, err.message)
 	}
+}
+
+exports.search = async function (ctx) {
+	let query = ctx.request.query 
+	let { searchText = '',  pageSize = 10, pageNum = 1} = query
+	searchText = escapeSearch(searchText)
+	pageSize = parseInt(pageSize)
+	pageNum = parseInt(pageNum)
+	let reg = new RegExp(searchText, 'i')
+	let queryOpts = {
+		$or: [
+			{orderNo: {$regex: reg}},
+			{'products.title': {$regex: reg}},
+			{'user.username': {$regex: reg}},
+			// {title: {$regex: reg}},
+			// {title: {$regex: reg}},
+			// {title: {$regex: reg}},
+			// {desc: {$regex: reg}},
+			{detail: {$regex: reg}},
+			{$where: `this._id.toString().indexOf('${searchText}') !== -1`}
+		]
+	}
+	try {
+		let count = await Order.count(queryOpts)
+		let res = await Order.find(queryOpts, {}, {
+			skip: (pageNum - 1) * pageSize,
+			limit: pageSize
+		}).populate({path: 'user', select: '-password'})
+		ctx.body = ctx.createRes(200, {list: res, count})
+	} catch (err) {
+		ctx.body = ctx.createRes(500, err.message)
+	}	
 }
 // 取消，删除，退货 订单状态修改
 exports.updateMyOrder = async function (ctx) {

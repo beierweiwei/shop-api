@@ -1,5 +1,6 @@
 const mongoose = require('mongoose')
 const User = mongoose.model('User')
+const escapeSearch = require('../../util/escape')
 exports.getUserList = async (ctx, next) => {
 	if (!ctx.session.admin) return ctx.body = ctx.createRes(201)
 	let count
@@ -141,6 +142,35 @@ exports.regist = async (ctx, next) => {
 	}else {
 		ctx.body = ctx.createRes(300)
 	}
+}
+
+exports.search = async function (ctx, next) {
+	let query = ctx.request.query 
+	let { searchText = '',  pageSize = 10, pageNum = 1} = query
+	searchText = escapeSearch(searchText)
+	pageSize = parseInt(pageSize)
+	pageNum = parseInt(pageNum)
+	let reg = new RegExp(searchText, 'i')
+	let queryOpts = {
+		$or: [
+			{username: {$regex: reg}},
+			{tel: {$regex: reg}},
+			{detail: {$regex: reg}},
+			{$where: `this._id.toString().indexOf('${searchText}') !== -1`}
+		]
+	}
+	console.log(searchText)
+	try {
+		let count = await User.count(queryOpts)
+		let res = await User.find(queryOpts, {}, {
+			skip: (pageNum - 1) * pageSize,
+			limit: pageSize
+		})
+		ctx.body = ctx.createRes(200, {list: res, count})
+	} catch (err) {
+		ctx.body = ctx.createRes(500, err.message)
+	}
+	
 }
 
 // // 关于收货地址

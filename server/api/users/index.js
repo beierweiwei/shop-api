@@ -4,6 +4,7 @@ const router = require('koa-router')()
 const controller = require('./users.controller')
 // router.post('/adduser', controller.addUser)
 // batchAction
+router.get('/search', controller.search)
 router.post('/update', controller.updateUser)
 router.post('/delete', controller.deleteUser)
 router.get('/list', controller.getUserList)

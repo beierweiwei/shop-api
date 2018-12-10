@@ -25,7 +25,8 @@ router.get('/prop/:id', PropController.getProductProp)
 router.post('/prop/:id', PropController.updateProductProp)
 // router.post('/prop/add', PropController.createProductProp)
 // // router.post('/adduser', controller.addUser)
-//批量操作
+//商品
+router.get('/search', ProductController.search)
 router.post('/batch', ProductController.batchAction)
 router.post('/:id', hasRequestPermit('product.product.update'), ProductController.editProduct)
 router.get('/list', ProductController.getProductList)

@@ -1,4 +1,5 @@
 const mongoose = require('mongoose')
+const escapeSearch = require('../../util/escape')
 const Product = mongoose.model('Product')
 const ProductProp = mongoose.model('ProductProp')
 const ProductCate = mongoose.model('ProductCate')
@@ -99,6 +100,34 @@ const batchAction = async function (ctx) {
 	}
 }
 
+const search = async function (ctx, next) {
+	let query = ctx.request.query 
+	let { searchText = '',  pageSize = 10, pageNum = 1} = query
+	searchText = escapeSearch(searchText)
+	pageSize = parseInt(pageSize)
+	pageNum = parseInt(pageNum)
+	let reg = new RegExp(searchText, 'i')
+	let queryOpts = {
+		$or: [
+			{title: {$regex: reg}},
+			{desc: {$regex: reg}},
+			{detail: {$regex: reg}},
+			{$where: `this._id.toString().indexOf('${searchText}') !== -1`}
+		]
+	}
+	try {
+		let count = await Product.count(queryOpts)
+		let res = await Product.find(queryOpts, {}, {
+			skip: (pageNum - 1) * pageSize,
+			limit: pageSize
+		}).populate('props').populate('cateId')
+		ctx.body = ctx.createRes(200, {list: res, count})
+	} catch (err) {
+		ctx.body = ctx.createRes(500, err.message)
+	}
+	
+}
+
 // 根据商品分类获取商品属性
 
 
@@ -110,3 +139,4 @@ exports.editProduct = editProduct
 exports.getProductById = getProductById
 exports.getProductList = getProductList
 exports.deleteProduct = deleteProduct
+exports.search = search
