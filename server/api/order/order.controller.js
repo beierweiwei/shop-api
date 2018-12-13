@@ -233,26 +233,35 @@ exports.search = async function (ctx) {
 	searchText = escapeSearch(searchText)
 	pageSize = parseInt(pageSize)
 	pageNum = parseInt(pageNum)
+	// 关联模糊查询
 	let reg = new RegExp(searchText, 'i')
-	let queryOpts = {
-		$or: [
-			{orderNo: {$regex: reg}},
-			{'products.title': {$regex: reg}},
-			{'user.username': {$regex: reg}},
-			// {title: {$regex: reg}},
-			// {title: {$regex: reg}},
-			// {title: {$regex: reg}},
-			// {desc: {$regex: reg}},
-			{detail: {$regex: reg}},
-			{$where: `this._id.toString().indexOf('${searchText}') !== -1`}
-		]
-	}
+	let findOper = [
+		{$lookup: {
+			from: 'users',
+			localField: 'user',
+			foreignField: '_id',
+			as: 'user'
+		}},
+		{$match: {
+			$or: [
+				{orderNo: {$regex: reg}},
+				{'user.username': {$regex: reg}}
+			]
+		}},
+		{
+			$limit: pageSize
+		},
+		{
+			$skip: (pageNum - 1) * pageSize
+		}
+	]
+	let countOper = [...findOper, {
+		$count: 'count'
+	}]
 	try {
-		let count = await Order.count(queryOpts)
-		let res = await Order.find(queryOpts, {}, {
-			skip: (pageNum - 1) * pageSize,
-			limit: pageSize
-		}).populate({path: 'user', select: '-password'})
+		let res = await Order.aggregate(findOper)
+		let count = await Order.aggregate(countOper)
+		count = count[0].count
 		ctx.body = ctx.createRes(200, {list: res, count})
 	} catch (err) {
 		ctx.body = ctx.createRes(500, err.message)

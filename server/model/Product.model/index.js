@@ -33,12 +33,11 @@ const ProductSchema = new mongoose.Schema({
 		default: 0
 	},
 	price: {
-		type: String,
+		type: Number,
 		required: true 
 	},
 	mprice: {
-		type: String,
-		required: true 
+		type: Number 
 	},
 	detail: {
 		type: String,
@@ -90,7 +89,11 @@ const ProductSchema = new mongoose.Schema({
 			thumbPic: String,
 			default: ''
 		}
-	]
+	],
+	activitys: [{
+		type: Schema.Types.ObjectId,
+		ref: 'Activity'
+	}]
 })
 
 ProductSchema
