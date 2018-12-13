@@ -5,19 +5,32 @@ let CouponSchema = new Schema({
         type: Number,
         default: 1, // 优惠券类型。1 平台通用券 2 活动优惠券
     },
-    rule: {
-        full: {
-            type: Number,
-            required: true,
-            min: 0,
-        },
-        reduce: {
-            type: Number,
-            required: true,
-            
-        }
+    full: {
+        type: Number,
+        required: true,
+        min: 0,
     },
-    activity: [{
+    reduce: {
+        type: Number,
+        required: true,
+        min: 0,
+    },
+    perMax: {
+        type: Number,
+        required: true,
+        default: 1,
+    },
+    total: {
+        type: Number,
+        required: true,
+        min: 1,
+    },
+    rest: {
+        type: Number,
+        required: true,
+        min: 0
+    },
+    activities: [{
         type: Schema.Types.ObjectId,
         unique: true,
         ref: 'Activity'
@@ -42,14 +55,6 @@ let CouponSchema = new Schema({
     utime: {
         type: Date,
         default: Date.now 
-    },
-    total: {
-        type: Number,
-        required: true,
-        min: 0
-    },
-    rest: {
-        type: Number
     }
 }, {
     usePushEach: true

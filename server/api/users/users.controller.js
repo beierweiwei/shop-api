@@ -1,6 +1,9 @@
 const mongoose = require('mongoose')
 const User = mongoose.model('User')
+const crypto = require('crypto')
 const escapeSearch = require('../../util/escape')
+const { secrets } = require('../../config/env/')
+
 exports.getUserList = async (ctx, next) => {
 	if (!ctx.session.admin) return ctx.body = ctx.createRes(201)
 	let count
@@ -137,7 +140,7 @@ exports.regist = async (ctx, next) => {
 			ctx.session.user = res
 			ctx.body = ctx.createRes(200)
 		}catch(err) {
-			ctx.body = ctx.createRes(500)
+			ctx.body = ctx.createRes(err.message)
 		}
 	}else {
 		ctx.body = ctx.createRes(300)

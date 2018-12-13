@@ -48,25 +48,30 @@ let UserSchema = new Schema({
 		type: Schema.Types.ObjectId,
 		ref: 'Address'
 	}],
-	birth: Date,
+	birth: {
+		type: Date,
+		default: Date.now
+	},
 	coupons: [{
+		num: {
+			type: Number,
+			default: 1,
+			required: true
+		},
 		type: {
 		    type: Number,
 		    default: 0, // 优惠券类型。1 平台通用券 2 活动优惠券
 		},
-		rule: {
-		    full: {
-		        type: Number,
-		        required: true
-		    },
-		    reduce: {
-		        type: Number,
-		        required: true
-		    }
+		full: {
+		  type: Number,
+		   required: true
 		},
+		reduce: {
+      type: Number,
+      required: true
+    },
 		activity: [{
 		    type: Schema.Types.ObjectId,
-		    required: true,
 		    unique: true,
 		    ref: 'Activity'
 		}],
@@ -79,18 +84,10 @@ let UserSchema = new Schema({
 		    required: true
 		},
 		status: {
-		    type: Number, // 1 可使用 2 已冻结 3 已使用 4 已过期
-		    required: true,
-		    default: 1
-		},
-		ctime: {
-		    type: Date,
-		    default: Date.now
-		},
-		utime: {
-		    type: Date,
-		    default: Date.now 
-		},
+		  type: Number, // 1 可使用 2 已冻结 3 已使用 4 已过期
+		  required: true,
+		  default: 1
+		}
 	}]
 }, {
 	usePushEach: true
