@@ -102,7 +102,7 @@ const batchAction = async function (ctx) {
 
 const search = async function (ctx, next) {
 	let query = ctx.request.query 
-	let { searchText = '',  pageSize = 10, pageNum = 1} = query
+	let { searchText = '',  pageSize = 10, pageNum = 1, cateId} = query
 	searchText = escapeSearch(searchText)
 	pageSize = parseInt(pageSize)
 	pageNum = parseInt(pageNum)
@@ -115,6 +115,7 @@ const search = async function (ctx, next) {
 			{$where: `this._id.toString().indexOf('${searchText}') !== -1`}
 		]
 	}
+	if (cateId) queryOpts.cateId = cateId
 	try {
 		let count = await Product.count(queryOpts)
 		let res = await Product.find(queryOpts, {}, {

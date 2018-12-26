@@ -19,3 +19,9 @@ Date.prototype.format = function(format) {
 	}
 	return format;
 }
+
+exports.isEarlier = function isE(time1, time2) {
+	time1 = new Date(time1).getTime()
+	time2 = new Date(time2).getTime()
+	return time1 < time2 
+} 

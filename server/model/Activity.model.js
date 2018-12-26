@@ -11,6 +11,12 @@ let ActivitySchema = new Schema({
         default: '',
         max: 100 
     },
+    startTime: {
+        type: Date
+    },
+    endTime: {
+        type: Date
+    },
     thumb: { 
         type: String,
         default: ''

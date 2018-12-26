@@ -2,14 +2,14 @@ const mongoose = require('mongoose')
 const escapeSearch = require('../../util/escape')
 const Activity = mongoose.model('Activity')
 const Product = mongoose.model('Product')
+const { isEarlier } = require('../../util/Date')
 exports.create = async function(ctx) {
   const data = ctx.request.body
-  const products = data.products
+  let { startTime = 0, endTime = 0  , products } = data
+  if (isEarlier(endTime, startTime)) ctx.body = ctx.createRes(401, '活动结束时间不能早于开始时间！') 
   try {
       let res = await Activity.create(data)
-      console.log(res)
       let id = res._id 
-      console.log(id)
       if(products) {
       	await Product.updateMany({_id: {$in: products}}, {$push: {activitys: id}})
       }
@@ -37,7 +37,7 @@ exports.get = async function(ctx) {
     const id = ctx.params.id
     if (!id) return ctx.body = ctx.createRes(401)
     try {
-        let res = await Activity.findOne({ _id: id })
+        let res = await Activity.findOne({ _id: id }).populate('products')
         ctx.body = ctx.createRes(200, res)
 
     } catch (err) {
