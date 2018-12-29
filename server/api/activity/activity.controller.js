@@ -20,7 +20,6 @@ exports.create = async function(ctx) {
     
 }
 exports.getList = async function(ctx) {
-	console.log('xxxx')
 	let query = ctx.query || {}
 	let { sort = '', pageSize = 10, pageNum = 1 } = query
 	pageSize = parseInt(pageSize) || 10
@@ -63,7 +62,10 @@ exports.update = async function(ctx) {
     let data = ctx.request.body
     let id = data.id
     if (!id) return ctx.body = ctx.createRes(401)
-    if (!Array.isArray(id)) id = [id]
+    if (!Array.isArray(id)) {
+      id = [id]
+      data.products = data.products || []
+    }
     try {
         let res = await Activity.updateMany({_id: {$in: id}}, {$set: data})
         ctx.body = ctx.createRes(200, res)
