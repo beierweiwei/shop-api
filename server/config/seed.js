@@ -10,11 +10,6 @@ const	User = mongoose.model('User')
 const Area = mongoose.model('Area')
 const Admin = mongoose.model('Admin')
 const Postage = mongoose.model('Postage')
-// const Business = mongoose.model('Bussiness')
-// const Order = mongoose.model('Order')
-// const Product = mongoose.model('Product')
-// const ProductCates = mongoose.model('ProductCates')
-
 const logger = require('../util/logs').logger
 
 // 初始化
