@@ -49,6 +49,12 @@ const ProductSchema = new mongoose.Schema({
 		type: String,
 		required: true 
 	},
+	activities: [
+		{
+			type: Schema.Types.ObjectId,
+			ref: 'Activity'
+		}
+	],
 	cateId: {
 		type: Schema.Types.ObjectId,
 		ref: 'ProductCate',
@@ -89,11 +95,7 @@ const ProductSchema = new mongoose.Schema({
 			thumbPic: String,
 			default: ''
 		}
-	],
-	activitys: [{
-		type: Schema.Types.ObjectId,
-		ref: 'Activity'
-	}]
+	]
 })
 
 ProductSchema

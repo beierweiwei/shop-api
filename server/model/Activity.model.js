@@ -48,9 +48,13 @@ let ActivitySchema = new Schema({
     },
     products: [{
         type: Schema.Types.ObjectId,
-        ref: 'Product',
+        ref: 'Product'
+    }],
+    coupons: [{
+        type: Schema.Types.ObjectId,
+        ref: 'Coupon',
+        unique: true
     }]
-
 }, {
     usePushEach: true
 })

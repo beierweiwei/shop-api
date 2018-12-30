@@ -2,16 +2,21 @@ const mongoose = require('mongoose')
 const escapeSearch = require('../../util/escape')
 const Activity = mongoose.model('Activity')
 const Product = mongoose.model('Product')
+const Coupon = mongoose.model('Coupon')
 const { isEarlier } = require('../../util/Date')
 exports.create = async function(ctx) {
   const data = ctx.request.body
-  let { startTime = 0, endTime = 0  , products } = data
+  let { startTime = 0, endTime = 0  , products, coupons } = data
   if (isEarlier(endTime, startTime)) ctx.body = ctx.createRes(401, '活动结束时间不能早于开始时间！') 
   try {
       let res = await Activity.create(data)
       let id = res._id 
       if(products) {
-      	await Product.updateMany({_id: {$in: products}}, {$push: {activitys: id}})
+      	await Product.updateMany({_id: {$in: products}}, {$push: {activities: id}})
+      }
+      if(coupons) {
+        console.log(coupons)
+        await Coupon.updateMany({_id: {$in: coupons}}, {$push: {activities: id}})
       }
       ctx.body = ctx.createRes(200, res)
   } catch (err) {
@@ -51,6 +56,8 @@ exports.delete = async function(ctx) {
     	let res 
         	await Activity.remove({_id: {$in: id}})
         	res = await Product.update({},{$pull: {activitys: {$in: id}}})
+          await Product.updateMany({activities: {$in: id}}, {$pull: {activities: {$in: id}}})
+          await Coupon.updateMany({activities: {$in: id}}, {$pull: {activities: {$in: id}}})
         ctx.body = ctx.createRes(200, res)
     } catch (err) {
         ctx.body = ctx.createRes(500, err.message)
@@ -64,11 +71,30 @@ exports.update = async function(ctx) {
     if (!id) return ctx.body = ctx.createRes(401)
     if (!Array.isArray(id)) {
       id = [id]
-      data.products = data.products || []
     }
+    let res 
     try {
-        let res = await Activity.updateMany({_id: {$in: id}}, {$set: data})
+        if (Array.isArray(data.id)) {
+          res = await Activity.updateMany({_id: {$in: id}}, {$set: data})
+        } else {
+          data.products = data.products || []
+          data.coupons = data.coupons || []
+          let ActivityDc = await Activity.findOne({_id: id})
+          let products = ActivityDc.products 
+          let coupons = ActivityDc.coupons 
+          let willDeleteProducts = products.filter(prod => !~data.products.indexOf(prod._id))
+          let willDeleteCoupons = coupons.filter(coupon => !~data.coupons.indexOf(coupon._id))
+          let willAddProducts = data.products.filter(prod => !~products.indexOf(prod._id))
+          let willAddCoupons = data.coupons.filter(coupon => !~coupons.indexOf(coupon._id))
+
+          await Product.updateMany({_id: {$in: willDeleteProducts}}, {$pull: {activities: data.id}})
+          await Product.updateMany({_id: {$in: willAddProducts}}, {$push: {activities: data.id}})
+          await Coupon.updateMany({_id: {$in: willDeleteCoupons}}, {$pull: {activities: data.id}})
+          await Coupon.updateMany({_id: {$in: willAddCoupons}}, {$push: {activities: data.id}})
+          res = await Activity.updateMany({_id: {$in: id}}, {$set: data})
+        }
         ctx.body = ctx.createRes(200, res)
+        
     } catch (err) {
         ctx.body = ctx.createRes(501, err.message)
     }

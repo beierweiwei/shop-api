@@ -61,7 +61,8 @@ exports.collect = async function (ctx) {
 // 后台
 exports.create = async function(ctx) {
   const data = ctx.request.body
-	data.rest = data.total 
+	data.rest = data.total
+	data.activities = []
   try {
       let res = await Coupon.create(data)
       ctx.body = ctx.createRes(200, res)
@@ -71,13 +72,16 @@ exports.create = async function(ctx) {
 }
 exports.getList = async function(ctx) {
 	let query = ctx.query || {}
-	let { sort = '', pageSize = 10, pageNum = 1 } = query
+	let { sort = '', pageSize = 10, pageNum = 1, type, status } = query
 	pageSize = parseInt(pageSize) || 10
 	pageNum = parseInt(pageNum) || 1
+	let findQuery = {}
+	if (type) findQuery.type = type 
+	if (status) findQuery.status = status 
 
   try {
-      let list = await Coupon.find().sort(sort).skip((pageNum - 1) * pageSize).limit(pageSize).populate({ path: 'activities' }).lean()
-      let count = await Coupon.count()
+      let list = await Coupon.find(findQuery).sort(sort).skip((pageNum - 1) * pageSize).limit(pageSize).populate({ path: 'activities' }).lean()
+      let count = await Coupon.count(findQuery)
       return ctx.body = ctx.createRes(200, { list, count })
   } catch (err) {
       return ctx.body = ctx.createRes(500, err.message)
@@ -112,7 +116,7 @@ exports.update = async function(ctx) {
     console.log(data)
     let id = data.id
     // todo 如果total改变了, reset同时更新 
-    if (data.total) data.rest = data.total 
+    if (data.total) data.rest = data.total
     if (!id) return ctx.body = ctx.createRes(401)
     if (!Array.isArray(id)) id = [id]
     try {

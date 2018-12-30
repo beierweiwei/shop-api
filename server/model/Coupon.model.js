@@ -5,6 +5,15 @@ let CouponSchema = new Schema({
         type: Number,
         default: 1, // 优惠券类型。1 平台通用券 2 活动优惠券
     },
+    status: {
+        type: Number,
+        default: 1
+    },
+    title: {
+        type: String,
+        default: '',
+        required: true
+    },
     full: {
         type: Number,
         required: true,
@@ -32,7 +41,6 @@ let CouponSchema = new Schema({
     },
     activities: [{
         type: Schema.Types.ObjectId,
-        unique: true,
         ref: 'Activity'
     }],
     startTime: {
@@ -43,10 +51,9 @@ let CouponSchema = new Schema({
         type: Date,
         required: true
     },
-    status: {
-        type: Number, // 1 可使用 2 已冻结 3 已使用 4 已过期
-        required: true,
-        default: 1
+    userLevel: { // 需要会员等级
+        type: Number,
+        default: 0
     },
     ctime: {
         type: Date,
