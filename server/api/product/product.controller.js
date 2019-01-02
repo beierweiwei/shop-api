@@ -50,16 +50,16 @@ const getProductById = async function (ctx) {
 
 const getProductList = async function (ctx) {
 	const query = ctx.query
-	let sort = query.sort || ''
-	let pageNum = parseInt(query.pageNum)
-  pageNum = pageNum && pageNum > 0 ? pageNum : 1
-	let pageSize  = parseInt(query.pageSize)
-	pageSize = pageSize && pageSize > 0 ? pageSize : 10
+	let {pageNum , pageSize = 10, curtPage, sort = '' } = query
+	curtPage = curtPage || pageNum || 1 
+	curtPage = parseInt(curtPage) > 0 ?  parseInt(curtPage) : 1
+	pageSize  = parseInt(pageSize)
+	pageSize = pageSize > 0 ? pageSize : 10
 	//先查所有
 	try {
 		let count = await Product.count()
-		let result = await Product.find().populate({path: 'cateId', select: "_id name",  options: {sort: {sort: '1'}}}).populate('props').sort(sort).skip((pageNum - 1) * pageSize).limit(pageSize).lean()
-		ctx.body = ctx.createRes(200, {list: result, count: count, pageNum, pageSize})
+		let result = await Product.find().populate({path: 'cateId', select: "_id name",  options: {sort: {sort: '1'}}}).populate('props').sort(sort).skip((curtPage - 1) * pageSize).limit(pageSize).lean()
+		ctx.body = ctx.createRes(200, {list: result, count: count, curtPage, pageSize})
 	}catch (err) {
 		ctx.body = ctx.createRes(500, err.message)
 	}
