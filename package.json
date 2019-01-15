@@ -6,8 +6,8 @@
   "scripts": {
     "dev": "cross-env NODE_ENV=development nodemon ./bin/www",
     "debug": "cross-env NODE_ENV=development nodemon --inspect ./bin/www",
-    "serve:test": "cross-env NODE_ENV=test nodemon ./bin/www",
-    "pm2-start": "pm2 start ./bin/www.js",
+    "serve:test": "cross-env NODE_ENV=test nodemon ./bin/www.js",
+    "pm2-start": "pm2 start ./ecosystem.config.js --env production",
     "ava": "cross-env NODE_ENV=test ava test",
     "test": "cross-env NODE_ENV=test nyc --reporter=html --reporter=text ava --serial",
     "coverage": "nyc report --reporter=text-lcov | coveralls",
