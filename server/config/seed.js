@@ -10,6 +10,8 @@ const	User = mongoose.model('User')
 const Area = mongoose.model('Area')
 const Admin = mongoose.model('Admin')
 const Postage = mongoose.model('Postage')
+const ProductProp = mongoose.model('ProductProp')
+const ProductCate = mongoose.model('ProductCate')
 const logger = require('../util/logs').logger
 
 // 初始化
@@ -50,43 +52,43 @@ module.exports = async (ctx, next)=>{
 						{
 							name: '圆通',
 							price: 10,
-							increacePrice: 5 
+							increacePrice: 5
 						},
 						{
 							name: '顺丰',
 							price: 15,
-							increacePrice: 5 
+							increacePrice: 5
 						},
 						{
 							name: '圆通',
 							price: 10,
-							increacePrice: 5 
+							increacePrice: 5
 						},
 						{
 							name: '申通',
 							price: 10,
-							increacePrice: 5 
+							increacePrice: 5
 						},
 						{
 							name: '中通',
 							price: 10,
-							increacePrice: 5 
+							increacePrice: 5
 						},
 						{
 							name: '百世汇通',
 							price: 10,
-							increacePrice: 5 
+							increacePrice: 5
 						},
 						{
 							name: '邮政EMS',
 							price: 10,
-							increacePrice: 5 
+							increacePrice: 5
 						},
 						{
 							name: '韵达',
 							price: 10,
-							increacePrice: 5 
-						}																																				
+							increacePrice: 5
+						}
 					],
 					name: princes[princeCode],
 					default: 0,
@@ -95,7 +97,21 @@ module.exports = async (ctx, next)=>{
 			})
 			const res = await Postage.create(postageData)
 		}
+
+		// 商品属性
+		if (!await ProductProp.count()) {
+			const productData = require('./DB/productProps').data
+			const res = await ProductProp.create(productData)
+			console.log('productProp数据初始化完毕')
+		}
+
+		if (!await ProductCate.count()) {
+			const data = require('./DB/productCate').data
+			const res = await ProductCate.create(data)
+			console.log('productCate数据初始化完毕')
+		}
 	} catch (err) {
-		console.log(err.message)
-	}	
+		console.log(err)
+	}
+
 }

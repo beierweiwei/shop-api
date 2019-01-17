@@ -1,5 +1,5 @@
 const mongoose = require('mongoose')
-const Schema = mongoose.Schema 
+const Schema = mongoose.Schema
 const ProductCateSchema = new mongoose.Schema({
 	name: {
 		type: String,
@@ -11,7 +11,6 @@ const ProductCateSchema = new mongoose.Schema({
 		require: true,
 		unique: true
 	},
-	title: String,
 	sort: {
 		type: Number,
 		default: 0
