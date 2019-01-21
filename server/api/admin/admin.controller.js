@@ -12,7 +12,6 @@ exports.login = async (ctx, next) => {
 	let user
 	if(reqData.username && reqData.password) {
 		try {
-			
 			user = await User.findOne({username: reqData.username}, 'username password tel sex').lean()
 		}catch(err) {
 			console.log(err)
@@ -46,7 +45,7 @@ exports.regist = async (ctx, next) => {
 }
 
 // 后台管理员登陆
-// 
+//
 exports.adminLogin = async (ctx, next) => {
 	const md5 = crypto.createHash('md5')
 	const reqData = ctx.request.body
@@ -93,16 +92,16 @@ exports.crateValidateCode = async (ctx, next) => {
   let txt = ary.text
   let buf = ary.data
   ctx.type = 'svg'
-  ctx.session.captcha = txt 
-  ctx.body = buf 
+  ctx.session.captcha = txt
+  ctx.body = buf
 }
 
 exports.getList = async function (ctx, next) {
 	let { pageSize = 10, curtPage = 1} = ctx.request.query
-	pageSize = parseInt(pageSize) || 10 
+	pageSize = parseInt(pageSize) || 10
 	curtPage = parseInt(curtPage) || 1
 	let level = ctx.session.admin.level
-	let res 
+	let res
 	let count
 	try {
 		count = await Admin.count({level: {$gt: level}})
@@ -114,8 +113,8 @@ exports.getList = async function (ctx, next) {
 }
 
 exports.getOne = async function (ctx, next) {
-	let id = ctx.params.id 
-	let res 
+	let id = ctx.params.id
+	let res
 	try {
 		res = await Admin.findOne({_id: id}).select('-password')
 	} catch(err) {
@@ -126,8 +125,8 @@ exports.getOne = async function (ctx, next) {
 
 exports.update = async function (ctx, next) {
 	let data = ctx.request.body
-	let id = data.id 
-	let res 
+	let id = data.id
+	let res
 	if (typeof id === 'string') {
 		id = [id]
 		if (data.password) {
@@ -136,7 +135,7 @@ exports.update = async function (ctx, next) {
 		}
 	}
 	else id = [...id]
-	delete data.id 
+	delete data.id
 	try {
 		res = await Admin.updateMany ({_id: {$in: id}}, {$set: data})
 	} catch (err) {
@@ -146,8 +145,8 @@ exports.update = async function (ctx, next) {
 }
 
 exports.delete = async function (ctx, next) {
-	let id = ctx.request.body.id 
-	let res 
+	let id = ctx.request.body.id
+	let res
 
 	if (typeof id === 'string') id = [id]
 	try {
@@ -158,15 +157,28 @@ exports.delete = async function (ctx, next) {
 	ctx.body = ctx.createRes(200, res)
 }
 
+// 后台用户中心接口
 exports.getInfo = async function (ctx) {
 	let admin = ctx.session.admin
-	let res 
+	let res
 	try {
 		res = await Admin.findOne({_id: admin._id}).select('-password')
 		ctx.body = ctx.createRes(200, res)
 	} catch (err) {
 		ctx.body = ctx.createRes(500, res.message)
 	}
+}
+
+exports.updateInfo = async function (ctx) {
+	const admin = ctx.session.admin
+	const data = ctx.request.body
+	try {
+		const res = await Admin.findOneAndUpdate({_id: admin._id}, {...data})
+		ctx.body = ctx.createRes(200)
+	} catch (err) {
+		ctx.body = ctx.createRes(500, res.err.message)
+	}
+
 }
 
 async function validateLevel (ids, level, ctx) {
@@ -181,11 +193,11 @@ async function validateLevel (ids, level, ctx) {
 //
 // }
 
-exports.info = async function (ctx, next) {
-	let admin = ctx.session.admin 
-	if (admin) {
-		ctx.body = ctx.createRes(200, admin)
-	}else {
-		ctx.body = ctx.createRes(201)
-	}
-}
+// exports.info = async function (ctx, next) {
+// 	let admin = ctx.session.admin
+// 	if (admin) {
+// 		ctx.body = ctx.createRes(200, admin)
+// 	}else {
+// 		ctx.body = ctx.createRes(201)
+// 	}
+// }

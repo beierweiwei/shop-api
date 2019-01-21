@@ -91,8 +91,11 @@ const ProductSchema = new mongoose.Schema({
 				type: Number,
 				default: 1
 			},
-			thumbPic: String,
-			default: ''
+			thumbPic: {
+				type: String,
+				default: ''
+			}
+
 		}
 	]
 })

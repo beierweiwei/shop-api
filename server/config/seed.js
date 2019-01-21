@@ -12,6 +12,7 @@ const Admin = mongoose.model('Admin')
 const Postage = mongoose.model('Postage')
 const ProductProp = mongoose.model('ProductProp')
 const ProductCate = mongoose.model('ProductCate')
+const Product = mongoose.model('Product')
 const logger = require('../util/logs').logger
 
 // 初始化
@@ -104,11 +105,16 @@ module.exports = async (ctx, next)=>{
 			const res = await ProductProp.create(productData)
 			console.log('productProp数据初始化完毕')
 		}
-
+		// 商品分类
 		if (!await ProductCate.count()) {
 			const data = require('./DB/productCate').data
 			const res = await ProductCate.create(data)
 			console.log('productCate数据初始化完毕')
+		}
+		if (!await Product.count()) {
+			const data = require('./DB/product').data
+			await Product.create(data)
+			console.log('product数据初始化完毕')
 		}
 	} catch (err) {
 		console.log(err)
