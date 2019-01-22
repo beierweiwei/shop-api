@@ -56,7 +56,7 @@ exports.adminLogin = async (ctx, next) => {
   }
 	if(reqData.username && reqData.password) {
 		try {
-			user = await Admin.findOne({username: reqData.username}, 'username password  level').lean()
+			user = await Admin.findOne({username: reqData.username}).lean()
 		}catch(err) {
 			ctx.body = ctx.createRes(500, err.message)
 		}
