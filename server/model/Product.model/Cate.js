@@ -9,7 +9,6 @@ const ProductCateSchema = new mongoose.Schema({
 		type: String,
 		require: true
 	},
-	title: String,
 	sort: {
 		type: Number,
 		default: 0

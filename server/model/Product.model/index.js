@@ -1,5 +1,5 @@
 const mongoose = require('mongoose')
-const Schema = mongoose.Schema 
+const Schema = mongoose.Schema
 const ProductSchema = new mongoose.Schema({
 	title: {
 		type: String,
@@ -8,18 +8,15 @@ const ProductSchema = new mongoose.Schema({
 	},
 	thumbPic: [{
 		type: String,
-		required: true 
+		required: true
 	}],
 	des: {
 		type: String,
 		required: true,
 		max: 50
 	},
-	props: [{
-		type:  Schema.Types.ObjectId,
-		ref: 'ProductProp',
-		required: true
-	}],
+	// props : {propsId: {name: '', selector: ['xx', 'xxx']}}
+	props: [],
 	isSale: {
 		type: Number,
 		default: 1
@@ -34,20 +31,20 @@ const ProductSchema = new mongoose.Schema({
 	},
 	price: {
 		type: Number,
-		required: true 
+		required: true
 	},
 	mprice: {
-		type: Number 
+		type: Number
 	},
 	detail: {
 		type: String,
-		required: true 
+		required: true
 	},
 	unit: {
 		// type: Schema.Types.ObjectId,
 		// ref: 'ProductUnit'
 		type: String,
-		required: true 
+		required: true
 	},
 	activities: [
 		{
@@ -58,7 +55,7 @@ const ProductSchema = new mongoose.Schema({
 	cateId: {
 		type: Schema.Types.ObjectId,
 		ref: 'ProductCate',
-		required: true 
+		required: true
 	},
 	shopId: {
 		type: String,
@@ -70,19 +67,21 @@ const ProductSchema = new mongoose.Schema({
 	},
 	utime: {
 		type: Date,
-		default: Date.now	
+		default: Date.now
 	},
 	subProds: [
 		{
 			//_id: Schema.Types.ObjectId,
-			propItems: String,
+			propItems: {
+				type: String
+			},
 			price: {
 				type: Number,
 				required: true
 			},
 			stock: {
 				type: Number,
-				required: true 
+				required: true
 			},
 			saleNum: {
 				type: Number,
@@ -92,8 +91,11 @@ const ProductSchema = new mongoose.Schema({
 				type: Number,
 				default: 1
 			},
-			thumbPic: String,
-			default: ''
+			thumbPic: {
+				type: String,
+				default: ''
+			}
+
 		}
 	]
 })

@@ -1,14 +1,12 @@
 const mongoose = require('mongoose')
-const Schema = mongoose.Schema 
+const Schema = mongoose.Schema
 
 const ProductPropSchema = new Schema({
 	name: {
 		type: String,
-		unique: true
 	},
 	field: {
 		type: String,
-		unique: true
 	},
 	isMulit: { //是否多选： 0 否 1是
 		type: Number,
@@ -16,7 +14,6 @@ const ProductPropSchema = new Schema({
 	},
 	selector: [{
 		type: String,
-		unique: true
 	}],
 	sort: {
 		type: Number,
@@ -29,6 +26,9 @@ const ProductPropSchema = new Schema({
 	utime: {
 		type: Date,
 		default: Date.now
+	},
+	cate: {
+		type: String
 	}
 })
 const ProductProp = mongoose.model('ProductProp', ProductPropSchema)
