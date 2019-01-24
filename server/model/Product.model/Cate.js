@@ -1,15 +1,13 @@
 const mongoose = require('mongoose')
-const Schema = mongoose.Schema 
+const Schema = mongoose.Schema
 const ProductCateSchema = new mongoose.Schema({
 	name: {
 		type: String,
 		require: true,
-		unique: true
 	},
 	field: {
 		type: String,
-		require: true,
-		unique: true
+		require: true
 	},
 	title: String,
 	sort: {

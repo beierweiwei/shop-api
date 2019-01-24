@@ -12,8 +12,8 @@ var all = {
   mongo: {
     options: {
       useMongoClient: true,
-      // user: process.env.MONGO_USERNAME || '', 
-      // pass: process.env.MONGO_PASSWORD || ''
+      user: process.env.MONGO_USERNAME || '',
+      pass: process.env.MONGO_PASSWORD || ''
     }
   },
   //redis 配置
@@ -34,14 +34,12 @@ var all = {
   // static
   static: './static',
   //七牛配置
-  qiniu:{
-    app_key: process.env.QINIU_APP_KEY || '',
-    app_secret: process.env.QINIU_APP_SECRET || '',
-    domain: process.env.QINIU_APP_DOMAIN || '',          //七牛配置域名
-    bucket: process.env.QINIU_APP_BUCKET || ''           //七牛空间名称  
-  },
-  //默认首页图片.
-  defaultIndexImage: 'https://upload.jackhu.top/blog/index/default.jpg-600x1500q80',
+  // qiniu:{
+  //   app_key: process.env.QINIU_APP_KEY || '',
+  //   app_secret: process.env.QINIU_APP_SECRET || '',
+  //   domain: process.env.QINIU_APP_DOMAIN || '',          //七牛配置域名
+  //   bucket: process.env.QINIU_APP_BUCKET || ''           //七牛空间名称
+  // },
   //第三方登录配置
   github:{
     clientID: process.env.GITHUB_CLIENT_ID || 'clientID',
@@ -59,26 +57,7 @@ var all = {
     callbackURL: process.env.QQ_CALLBACK_URL || '',
   },
   //移动APP列表
-  apps:[
-    {
-      name:'React Native',
-      gitUrl:'//github.com/jackhutu/jackblog-react-native-redux',
-      downloadUrl:{
-        android:'//a.app.qq.com/o/simple.jsp?pkgname=top.jackhu.reactnative',
-        ios:''
-      },
-      qrcode:'https://upload.jackhu.top/qrcode/jackblog-react-native-qrcode.png'
-    },
-    {
-      name:'Ionic 2.0',
-      gitUrl:'//github.com/jackhutu/jackblog-ionic2',
-      downloadUrl:{
-        android:'https://upload.jackhu.top/downloads/Jackblog-ionic2-1.0.0.apk',
-        ios:''
-      },
-      qrcode:'https://upload.jackhu.top/qrcode/jackblog-ionic2-v1.0.0.png'
-    }
-  ],
+  apps:[],
   //开启第三方登录
   snsLogins:['github','qq']
 }
@@ -86,6 +65,6 @@ var all = {
 var config = _.merge(all,require('./' + process.env.NODE_ENV + '.js') || {})
 //加载私有配置
 if (fs.existsSync(path.join(__dirname, 'private/index.js'))) {
-  config = _.merge(config, require(path.join(__dirname, 'private/index.js')) || {})  
+  config = _.merge(config, require(path.join(__dirname, 'private/index.js')) || {})
 }
 module.exports = config

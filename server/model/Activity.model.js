@@ -9,7 +9,7 @@ let ActivitySchema = new Schema({
     desc: {
         type: String,
         default: '',
-        max: 100 
+        max: 100
     },
     startTime: {
         type: Date
@@ -17,7 +17,7 @@ let ActivitySchema = new Schema({
     endTime: {
         type: Date
     },
-    thumb: { 
+    thumb: {
         type: String,
         default: ''
     },
@@ -32,7 +32,7 @@ let ActivitySchema = new Schema({
     },
     utime: {
         type: Date,
-        default: Date.now 
+        default: Date.now
     },
     rule: {
         full: {
@@ -43,7 +43,7 @@ let ActivitySchema = new Schema({
         reduce: {
             type: Number,
             required: true,
-            min: 0      
+            min: 0
         }
     },
     products: [{
@@ -53,7 +53,7 @@ let ActivitySchema = new Schema({
     coupons: [{
         type: Schema.Types.ObjectId,
         ref: 'Coupon',
-        unique: true
+        // unique: true
     }]
 }, {
     usePushEach: true
