@@ -8,7 +8,7 @@ const AddressSchema = new Schema({
 	},
 	name: {
 		type: String,
-		required: true 
+		required: true
 	},
 	areaCode:{
 		type: Array,
@@ -21,8 +21,18 @@ const AddressSchema = new Schema({
 	detail: {
 		type: String,
 		required: true
+	},
+	isDef: {
+		type: Number,
+		required: true,
+		default: 0
+	},
+	user: {
+		 type: Schema.Types.ObjectId,
+     ref: 'User',
+     required: true
 	}
-}) 
+})
 
 exports.AddressSchema = AddressSchema
 module.exports = mongoose.model('Address', AddressSchema)

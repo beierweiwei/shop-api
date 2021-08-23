@@ -5,7 +5,6 @@
 
 const mongoose = require('mongoose')
 const Schema = mongoose.Schema
-const crypto = require('crypto')
 
 let UserSchema = new Schema({
 	username: {
@@ -17,14 +16,23 @@ let UserSchema = new Schema({
 		type: String,
 		require: true
 	},
+	payPassword: {
+		type: String,
+		required: true,
+		validate: [
+			function (val = '') {
+				const strArr = val.toString().split('')
+				return strArr.length === 6 && strArr.every(word => Number(word))
+			},
+			'支付密码为长度为6的数字组合！'
+		]
+	},
 	sex: {
 		type: Number,
 		default: 0,
 	},
 	tel: {
-		type: String,
-		unique: true,
-		require: true
+		type: String
 	},
 	avatar: {
 		type: String
@@ -72,7 +80,6 @@ let UserSchema = new Schema({
     },
 		activity: [{
 		    type: Schema.Types.ObjectId,
-		    unique: true,
 		    ref: 'Activity'
 		}],
 		startTime: {

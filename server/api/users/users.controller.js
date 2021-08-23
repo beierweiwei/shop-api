@@ -3,7 +3,7 @@ const User = mongoose.model('User')
 const crypto = require('crypto')
 const escapeSearch = require('../../util/escape')
 const { secrets } = require('../../config/env/')
-
+const Cart = mongoose.model('Cart')
 exports.getUserList = async (ctx, next) => {
 	if (!ctx.session.admin) return ctx.body = ctx.createRes(201)
 	let count
@@ -17,7 +17,7 @@ exports.getUserList = async (ctx, next) => {
 		const count = await User.count()
 		const userList = await User.find().sort(sort).skip((pageNum - 1) * pageSize).limit(pageSize)
 		ctx.body = ctx.createRes(200, {list: userList, count, pageSize, pageNum, count})
-		
+
 	}catch(err) {
 		ctx.body = ctx.createRes(500, err.message)
 	}
@@ -48,7 +48,7 @@ exports.updateUser = async function (ctx) {
 	let id = data.id
 	id = typeof id === 'string' ? [id] : id
 	id = [...id]
-	delete data.id 
+	delete data.id
 	let tempData = {}
 	Object.keys(data).filter(key => ~accessKeys.indexOf(key) && data[key] !== undefined).forEach(key => tempData[key] = data[key])
 	try {
@@ -63,7 +63,7 @@ exports.updateUser = async function (ctx) {
 }
 
 exports.deleteUser = async function (ctx) {
-	const data = ctx.request.body 
+	const data = ctx.request.body
 	let id = data.id
 	id = typeof id === 'string' ? [id] : id
 	try {
@@ -76,22 +76,22 @@ exports.deleteUser = async function (ctx) {
 // user
 exports.getMe = async function (ctx) {
 	let user = ctx.session.user || {}
-	let id = user._id 
-	let res 
+	let id = user._id
+	let res
 	try {
-		res = await User.findOne({_id: id}).select('-password')
+		res = await User.findOne({_id: id}).select('-password').populate('address')
 		res = res || {}
 	} catch (err) {
 		ctx.body = ctx.createRes(500)
 	}
-	ctx.body = ctx.createRes(200, {data: res})
+	ctx.body = ctx.createRes(200, res)
 }
 
 exports.updateMe = async function (ctx) {
 	let user = ctx.session.user || {}
 	let id = user._id
 	let data = ctx.request.body
-	let res 
+	let res
 	['money', 'username', 'block'].forEach(path => {
 		if (data[path]) delete data[path]
 	})
@@ -113,8 +113,8 @@ exports.login = async (ctx, next) => {
 	let user
 	if(reqData.username && reqData.password) {
 		try {
-			
-			user = await User.findOne({username: reqData.username}, 'username password tel sex').lean()
+
+			user = await User.findOne({username: reqData.username}, 'username password tel sex address').populate('address').lean()
 		}catch(err) {
 			console.log(err)
 			ctx.body = ctx.createRes(300, err.message)
@@ -137,8 +137,10 @@ exports.regist = async (ctx, next) => {
 		data.password = md5.update(data.password + secrets).digest('hex')
 		try {
 			res = await User.create(data)
-			ctx.session.user = res
-			ctx.body = ctx.createRes(200)
+			res = JSON.parse(JSON.stringify(res))
+			delete res.password
+			await Cart.create({userId: res._id, list: []})
+			ctx.body = ctx.createRes(200, res)
 		}catch(err) {
 			ctx.body = ctx.createRes(err.message)
 		}
@@ -148,7 +150,7 @@ exports.regist = async (ctx, next) => {
 }
 
 exports.search = async function (ctx, next) {
-	let query = ctx.request.query 
+	let query = ctx.request.query
 	let { searchText = '',  pageSize = 10, pageNum = 1} = query
 	searchText = escapeSearch(searchText)
 	pageSize = parseInt(pageSize)
@@ -162,7 +164,6 @@ exports.search = async function (ctx, next) {
 			{$where: `this._id.toString().indexOf('${searchText}') !== -1`}
 		]
 	}
-	console.log(searchText)
 	try {
 		let count = await User.count(queryOpts)
 		let res = await User.find(queryOpts, {}, {
@@ -173,12 +174,12 @@ exports.search = async function (ctx, next) {
 	} catch (err) {
 		ctx.body = ctx.createRes(500, err.message)
 	}
-	
+
 }
 
 // // 关于收货地址
 // exports.addAddress = async function (ctx, netx) {
-	
+
 // 	ctx.body = ctx.createRes(200)
 // }
 
@@ -194,11 +195,11 @@ exports.search = async function (ctx, next) {
 // }
 
 // exports.getAddressList = async function () {
-	
+
 // }
 
 // exports.getAddress = async function (ctx, next) {
-// 	const id = ctx.params.id 
+// 	const id = ctx.params.id
 // 	Address.findOne('_id': id)
 // }
 

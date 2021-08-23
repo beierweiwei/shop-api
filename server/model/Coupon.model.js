@@ -14,6 +14,10 @@ let CouponSchema = new Schema({
         default: '',
         required: true
     },
+    desc: {
+        type: String,
+        required: true
+    },
     full: {
         type: Number,
         required: true,
@@ -61,7 +65,7 @@ let CouponSchema = new Schema({
     },
     utime: {
         type: Date,
-        default: Date.now 
+        default: Date.now
     }
 }, {
     usePushEach: true

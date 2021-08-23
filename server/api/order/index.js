@@ -4,8 +4,8 @@ const { hasRequestPermit, hasUserLogin } = require('../../middleware')
 
 //前台
 router.post('/', hasUserLogin, controller.createOrder)
-router.get('/my', hasUserLogin, controller.getMyOrder)
-router.get('/my/:id', hasUserLogin, controller.getMyOrderList)
+router.get('/my', hasUserLogin, controller.getMyOrderList)
+router.get('/my/:id', hasUserLogin, controller.getMyOrder)
 router.post('/my', hasUserLogin, controller.updateMyOrder)
 //router.post('/:id', controller.createOrder)
 router.get('/search', controller.search)
@@ -16,6 +16,7 @@ router.post('/update/', hasRequestPermit('order.order.update'), controller.updat
 router.post('/update/:id', hasRequestPermit('order.order.update'), controller.updateOrder)
 router.get('/', hasRequestPermit('order.order.query'), controller.getOrderList)
 router.get('/:id', hasRequestPermit('order.order.query'), controller.getOrder)
+
 router.post('/statement/', hasUserLogin, controller.createStatement)
 router.post('/pay/:id', hasUserLogin, controller.createPay)
 

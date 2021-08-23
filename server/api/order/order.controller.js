@@ -14,12 +14,12 @@ exports.createOrder = async function (ctx) {{
 	order.status = 0
 	order.user = ctx.session.user._id
 	// order.products = data.productIds
-	order.nums = data.nums 
+	order.nums = data.nums
 	order.discount_projects = data.discount_projects
 	order.postage = data.postage
 	let orderProducts = []
 	let orderProductIds = []
-	
+
 	try {
 		let addressObj = await Address.findOne({_id: data.address}).lean()
 		let prods = await Product.find({'subProds._id': {$in: data.productIds}}).populate('props')
@@ -29,12 +29,12 @@ exports.createOrder = async function (ctx) {{
 			let prodObj = JSON.parse(JSON.stringify(prod))
 				delete prodObj.subProds
 			prod.subProds.map(subProd => {
-				subProd.price = Number(subProd.price) || 0 
+				subProd.price = Number(subProd.price) || 0
 				let idx = data.productIds.indexOf(subProd._id.toString())
 				if (~idx) {
-					
+
 					let subProdObj = JSON.parse(JSON.stringify(subProd))
-					
+
 					prodObj.props = prod.props.map(prop => prop.name)
 					orderProducts.push({...prodObj, ...subProdObj})
 					let num = Number(data.nums[idx]) || 0
@@ -50,7 +50,7 @@ exports.createOrder = async function (ctx) {{
 					}
 				}
 			})
-			return prod 	
+			return prod
 		})
 		await Promise.all(prods.map(prod => prod.save()))
 		order.total = total
@@ -79,7 +79,7 @@ exports.getOrderList = async function (ctx) {
 }
 exports.getOrder =   async function (ctx) {
 	const orderId = ctx.params.id
-	const user = ctx.session.user 
+	const user = ctx.session.user
 	const admin = ctx.session.admin
 	if (!user && !admin) return ctx.body = ctx.createRes(201)
 	if (!orderId) return ctx.body = ctx.createRes(401)
@@ -94,7 +94,7 @@ exports.getOrder =   async function (ctx) {
 	}
 }
 exports.deleteOrder = async function (ctx) {
-	const orderId =  ctx.params.id 
+	const orderId =  ctx.params.id
 	const user = ctx.session.user
 	const admin = ctx.session.admin
 	if (!admin || !user) return ctx.body = ctx.createRes(201)
@@ -110,21 +110,21 @@ exports.deleteOrder = async function (ctx) {
 	}
 }
 exports.createStatement = async function (ctx) {
-	let user = ctx.session.user 
+	let user = ctx.session.user
 	let data = ctx.request.body
 	try {
-		let prods = await Product.find({'subProds._id': {$in: data.productIds}})
+		let prods = await Product.find({'subProds._id': {$in: data.productIds}}).lean()
 		// if (prods.length !== Object.keys(order.prodcutOrder).length) return ctx.body = ctx.createRes(401, '', '部分商品不存在')
 		let total = 0
 		let stateProds = []
 		prods.forEach((prod, idx) => {
 			prod.subProds.forEach(subProd => {
-				subProd.price = Number(subProd.price) || 0 
-				let idx = data.productIds.indexOf(subProd._id.toString())
-				if (~idx) {
-					total += subProd.price * (Math.ceil(data.nums[idx]) || 0)
-					subProd.num = data.nums[idx] || 0
-					stateProds.push(subProd)
+				let isCurtSubProd = !!~data.productIds.indexOf(subProd._id.toString())
+				if (isCurtSubProd) {
+					const price = Number(subProd.price) || 0
+					const buyNum = Math.ceil(data.nums[idx]) || 0
+					total += price * buyNum
+					stateProds.push({...prod, ...subProd, price, buyNum})
 				}
 			})
 		})
@@ -136,15 +136,16 @@ exports.createStatement = async function (ctx) {
 
 exports.createPay = async function (ctx) {
 	let user = ctx.session.user
-	const query = ctx.query 
+	const query = ctx.query
+	const { password = ''} = ctx.request.body
 	let orderId  = ctx.params.id
-	if (!user) return ctx.body = ctx.createRes(201)
 	try {
 		let userDc = await User.findOne({'_id': user._id})
 		let orderDc = await Order.findOne({'_id': orderId})
+		if (userDc.payPassword !== password.toString()) return ctx.body = ctx.createRes(203, '', '支付密码错误！')
 		if (orderDc.status >  0) return ctx.body = ctx.createRes(200, '订单已支付')
 		if ( orderDc && userDc._id.toString() === orderDc.user.toString()) {
-			if (orderDc.total > userDc.money) return ctx.body = ctx.createRes(203)
+			if (orderDc.total > userDc.money) return ctx.body = ctx.createRes(203, '', '余额不足！')
 			userDc.money = Number(userDc.money - orderDc.total)
 			orderDc.status = 1 //已支付
 			orderDc.ptime = Date.now()
@@ -176,7 +177,7 @@ exports.updateOrders = async function (ctx) {
 	let tempData = {}
 	const accessField = ['status'].filter(item => {
 		tempData[item] = mondify[item]
-	}) 
+	})
 	if (!ids) return ctx.body = ctx.createRes(401)
 	try {
 		ids = Array.isArray(ids) ? ids : [ids]
@@ -198,14 +199,14 @@ exports.updateOrder = async function (ctx) {
 		if (data.change) {
 			let changeTotal = Math.floor(data.change * 100)/100
 			if (!changeTotal) return ctx.body = ctx.createRes(401)
-			orderDc.total = orderDc.total + changeTotal 
-			if (orderDc.total < 0) ctx.body = ctx.createRes(401, 
+			orderDc.total = orderDc.total + changeTotal
+			if (orderDc.total < 0) ctx.body = ctx.createRes(401,
 				'总金额不能小于0')
 			orderDc.changes.push(changeTotal)
 		}
-		orderDc.status = data.status 
-		orderDc.address = data.address 
-		let res = await orderDc.save() 
+		orderDc.status = data.status
+		orderDc.address = data.address
+		let res = await orderDc.save()
 		ctx.body = ctx.createRes(200, res)
 	} catch (err) {
 		ctx.body = ctx.createRes(500, err.message)
@@ -228,7 +229,7 @@ exports.deleteOrders = async function (ctx) {
 }
 
 exports.search = async function (ctx) {
-	let query = ctx.request.query 
+	let query = ctx.request.query
 	let { searchText = '',  pageSize = 10, pageNum = 1} = query
 	searchText = escapeSearch(searchText)
 	pageSize = parseInt(pageSize)
@@ -265,12 +266,12 @@ exports.search = async function (ctx) {
 		ctx.body = ctx.createRes(200, {list: res, count})
 	} catch (err) {
 		ctx.body = ctx.createRes(500, err.message)
-	}	
+	}
 }
 // 取消，删除，退货 订单状态修改
 exports.updateMyOrder = async function (ctx) {
-	const data = ctx.request.body 
-	const id = data.id 
+	const data = ctx.request.body
+	const id = data.id
 	const userId = ctx.session.user._id
 	const accessModifyStatus = [0, 3, 4]
 	let tempData = {}
@@ -285,12 +286,12 @@ exports.updateMyOrder = async function (ctx) {
 		}
 	}
 	if (!id) ctx.body = ctx.createRes(401)
-	
+
 	try {
 		let orderDc = await Order.findOne({_id: id})
 		if (tempData.status && tempData.status < orderDc.status) ctx.body = ctx.createRes(401)
-		orderDc.status = data.status 
-		let res = await orderDc.save() 
+		orderDc.status = data.status
+		let res = await orderDc.save()
 		ctx.body = ctx.createRes(200, res)
 	} catch (err) {
 		ctx.body = ctx.createRes(500, err.message)
@@ -299,7 +300,7 @@ exports.updateMyOrder = async function (ctx) {
 
 exports.getMyOrder = async function (ctx) {
 	const orderId = ctx.params.id
-	const user = ctx.session.user 
+	const user = ctx.session.user
 	if (!orderId) return ctx.body = ctx.createRes(401)
 	try {
 		let res = await Order.findOne({_id: orderId, user: user._id})
@@ -310,12 +311,12 @@ exports.getMyOrder = async function (ctx) {
 }
 
 exports.getMyOrderList = async function (ctx) {
-	const {pageSize = 10, curtPage = 1, sort} = ctx.request.query 
+	let {pageSize = 10, curtPage = 1, sort} = ctx.request.query
 	pageSize = parseInt(pageSize)
 	curtPage = parseInt((curtPage))
-	const user = ctx.session.user 
+	const user = ctx.session.user
 	try {
-		let res = await Order.findOne({user: user._id}).skip(pageSize * (curtPage -1)).limte(pageSize).sort(sort)
+		let res = await Order.find({user: user._id}).skip(pageSize * (curtPage -1)).limit(pageSize).sort(sort)
 		ctx.body = ctx.createRes(200, res)
 	} catch (err) {
 		ctx.body = ctx.createRes(500, err.message)

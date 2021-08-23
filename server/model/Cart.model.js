@@ -1,5 +1,5 @@
 const mongoose = require('mongoose')
-const Schema = mongoose.Schema 
+const Schema = mongoose.Schema
 const CartSchema = new Schema({
   userId: {
   	type: String,
@@ -7,7 +7,7 @@ const CartSchema = new Schema({
   },
   list: [
     {
-      prodId: {
+      id: {
       	type: String,
       	required: true
       },
@@ -21,4 +21,4 @@ const CartSchema = new Schema({
 })
 
 module.exports.CartModel = mongoose.model('Cart', CartSchema)
-exports.CartSchema = CartSchema 
+exports.CartSchema = CartSchema
